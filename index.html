@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0c; --bg2: #161514; --bg3: #1c1b1a;
+    --border: #2a2826; --border2: #383533;
+    --text: #f0ede8; --text2: #9e9b96; --text3: #5c5a56;
+    --accent: #f0ede8; --accent-inv: #0d0d0c;
+    --red: #E24B4A; --green: #1D9E75; --yellow: #f59e0b; --blue: #378ADD;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    --font: 'Nunito', sans-serif; --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: var(--bg); z-index: 100; padding: 24px;
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  #login-screen.gone { opacity: 0; transform: scale(0.96); pointer-events: none; }
+  .login-box {
+    background: var(--bg2); border: 1.5px solid var(--border2); border-radius: 24px;
+    padding: 36px 32px; max-width: 380px; width: 100%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .login-logo { font-size: 40px; margin-bottom: 16px; }
+  .login-title { font-size: 24px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; }
+  .login-sub { font-size: 13px; color: var(--text3); font-weight: 700; margin-bottom: 28px; }
+  .login-label { font-size: 12px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; display: block; }
+  .login-input {
+    width: 100%; padding: 12px 16px; border-radius: 14px;
+    border: 1.5px solid var(--border2); background: var(--bg3);
+    font-family: var(--font); font-size: 15px; font-weight: 700;
+    color: var(--text); outline: none; margin-bottom: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,237,232,0.08); }
+  .login-btn {
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: var(--accent); color: var(--accent-inv);
+    font-family: var(--font); font-size: 15px; font-weight: 900;
+    border: none; cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, opacity 0.2s;
+    box-shadow: 0 4px 16px rgba(240,237,232,0.1);
+  }
+  .login-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 28px rgba(240,237,232,0.15); }
+  .login-btn:active { transform: scale(0.97); }
+  .login-error { font-size: 13px; font-weight: 800; color: var(--red); margin-top: 10px; display: none; text-align: center; }
+
+  /* ── MAIN PANEL ── */
+  #panel { display: none; max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
+  #panel.visible { display: block; animation: fadeIn 0.4s ease; }
+
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-top: 8px; }
+  .panel-logo { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+  .panel-badge { font-size: 10px; font-weight: 900; background: var(--red); color: #fff; border-radius: 8px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .logout-btn {
+    background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 12px;
+    padding: 8px 16px; font-size: 13px; font-weight: 800; color: var(--text2);
+    cursor: pointer; font-family: var(--font);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .logout-btn:hover { background: var(--red); color: #fff; transform: scale(1.04); }
+
+  /* connection status */
+  .conn-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 10px 14px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 14px; }
+  .conn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .conn-dot.online  { background: var(--green); animation: pulse 1.5s infinite; }
+  .conn-dot.offline { background: var(--red); }
+  .conn-dot.connecting { background: var(--yellow); animation: pulse 0.8s infinite; }
+  .conn-text { font-size: 13px; font-weight: 800; }
+
+  /* section */
+  .section { margin-bottom: 16px; }
+  .section-title { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; padding-left: 2px; }
+
+  /* card */
+  .card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 20px;
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.2s;
+  }
+  .card-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .card-desc  { font-size: 13px; color: var(--text2); font-weight: 600; margin-bottom: 18px; line-height: 1.5; }
+
+  /* toggle */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .toggle-label { font-size: 14px; font-weight: 800; color: var(--text2); }
+  .toggle {
+    position: relative; width: 52px; height: 28px; border-radius: 14px;
+    background: var(--border2); border: none; cursor: pointer;
+    transition: background 0.3s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--green); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .toggle.on::after { transform: translateX(24px); }
+  .toggle.red.on { background: var(--red); }
+
+  /* input */
+  .field-label { font-size: 12px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: block; }
+  .field-input {
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    border: 1.5px solid var(--border2); background: var(--bg3);
+    font-family: var(--font); font-size: 14px; font-weight: 700;
+    color: var(--text); outline: none; margin-bottom: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,237,232,0.07); }
+
+  /* type selector */
+  .type-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
+  .type-btn {
+    padding: 10px 6px; border-radius: 12px; border: 1.5px solid var(--border2);
+    background: var(--bg3); font-family: var(--font); font-size: 12px; font-weight: 800;
+    color: var(--text2); cursor: pointer; text-align: center;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s, color 0.2s;
+  }
+  .type-btn:hover { transform: scale(1.05); border-color: var(--border2); }
+  .type-btn.active { transform: scale(1.05); }
+  .type-btn.info.active    { background: var(--blue);   color: #fff; border-color: var(--blue); }
+  .type-btn.warning.active { background: var(--yellow); color: #fff; border-color: var(--yellow); }
+  .type-btn.success.active { background: var(--green);  color: #fff; border-color: var(--green); }
+  .type-btn.error.active   { background: var(--red);    color: #fff; border-color: var(--red); }
+
+  /* action button */
+  .action-btn {
+    width: 100%; padding: 13px; border-radius: 14px;
+    font-family: var(--font); font-size: 14px; font-weight: 900;
+    border: none; cursor: pointer; margin-top: 4px;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, opacity 0.2s;
+  }
+  .action-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.primary   { background: var(--accent); color: var(--accent-inv); }
+  .action-btn.danger    { background: var(--red); color: #fff; }
+  .action-btn.success   { background: var(--green); color: #fff; }
+  .action-btn.secondary { background: var(--bg3); color: var(--text2); border: 1.5px solid var(--border2); }
+
+  /* status pill */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;
+    margin-top: 10px;
+  }
+  .status-pill.active   { background: rgba(229,75,74,0.15); color: var(--red); border: 1.5px solid rgba(229,75,74,0.3); }
+  .status-pill.inactive { background: rgba(92,90,86,0.2); color: var(--text3); border: 1.5px solid var(--border); }
+  .status-pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .status-pill.active .status-pill-dot   { background: var(--red); animation: pulse 1s infinite; }
+  .status-pill.inactive .status-pill-dot { background: var(--text3); }
+
+  /* log */
+  .log-section { margin-top: 20px; }
+  .log-box {
+    background: var(--bg3); border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 14px; max-height: 160px; overflow-y: auto; font-family: var(--mono);
+    font-size: 12px; font-weight: 500; color: var(--text3);
+  }
+  .log-box::-webkit-scrollbar { width: 4px; }
+  .log-box::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .log-entry { padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .log-entry:last-child { border-bottom: none; }
+  .log-entry .log-time { color: var(--text3); }
+  .log-entry .log-ok   { color: var(--green); }
+  .log-entry .log-err  { color: var(--red); }
+  .log-entry .log-warn { color: var(--yellow); }
+
+  /* preview banner */
+  .preview-banner {
+    border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    transition: background 0.3s;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse  { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🔐</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">P.S./I.S. 104 · Schedule System</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" id="login-pw" type="password" placeholder="Enter admin password…" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="login-error">❌ Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- ══ MAIN PANEL ══ -->
+<div id="panel">
+
+  <div class="panel-header">
+    <div class="panel-logo">
+      📅 Admin
+      <span class="panel-badge">Staff Only</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <div class="conn-row">
+    <div class="conn-dot connecting" id="conn-dot"></div>
+    <div class="conn-text" id="conn-text">Connecting to Firebase…</div>
+  </div>
+
+  <!-- ── MAINTENANCE ── -->
+  <div class="section">
+    <div class="section-title">🔧 Maintenance Mode</div>
+    <div class="card">
+      <div class="card-title">Server Lockdown</div>
+      <div class="card-desc">When enabled, all users see a full-screen maintenance overlay and cannot use the app. Toggle off to restore access instantly.</div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Maintenance Active</span>
+        <button class="toggle red" id="maint-toggle" onclick="toggleMaintenance()"></button>
+      </div>
+
+      <label class="field-label">Message shown to users</label>
+      <input class="field-input" id="maint-msg" type="text" placeholder="We'll be back shortly!" maxlength="120" value="We'll be back shortly!" />
+
+      <label class="field-label">ETA (optional)</label>
+      <input class="field-input" id="maint-eta" type="text" placeholder="e.g. 5 minutes, 3:30 PM…" maxlength="60" />
+
+      <button class="action-btn danger" onclick="pushMaintenance()">🔧 Push Maintenance Settings</button>
+
+      <div id="maint-status" class="status-pill inactive">
+        <div class="status-pill-dot"></div>
+        <span id="maint-status-text">Inactive</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SERVER MESSAGE ── -->
+  <div class="section">
+    <div class="section-title">📢 Server Message</div>
+    <div class="card">
+      <div class="card-title">Broadcast Banner</div>
+      <div class="card-desc">Sends a dismissible banner to all users at the top of their screen in real time. Choose a type for color coding.</div>
+
+      <div class="preview-banner" id="msg-preview" style="background:rgba(55,138,221,0.15);color:#378ADD;">
+        <span id="preview-icon">📢</span>
+        <span id="preview-text">Your message will appear here…</span>
+      </div>
+
+      <label class="field-label">Message text</label>
+      <input class="field-input" id="srv-msg-text" type="text" placeholder="Type your message…" maxlength="200" oninput="updatePreview()" />
+
+      <label class="field-label">Message type</label>
+      <div class="type-grid">
+        <button class="type-btn info active"    id="type-info"    onclick="pickType('info')">📢 Info</button>
+        <button class="type-btn warning"         id="type-warning" onclick="pickType('warning')">⚠️ Warn</button>
+        <button class="type-btn success"         id="type-success" onclick="pickType('success')">✅ Good</button>
+        <button class="type-btn error"           id="type-error"   onclick="pickType('error')">🚨 Alert</button>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Show banner to users</span>
+        <button class="toggle" id="msg-toggle" onclick="toggleSrvMsg()"></button>
+      </div>
+
+      <button class="action-btn primary" onclick="pushServerMessage()">📢 Send Server Message</button>
+      <button class="action-btn secondary" style="margin-top:8px;" onclick="clearServerMessage()">✕ Clear / Hide Banner</button>
+
+      <div id="msg-status" class="status-pill inactive">
+        <div class="status-pill-dot"></div>
+        <span id="msg-status-text">No active message</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOG ── -->
+  <div class="log-section">
+    <div class="section-title">📋 Action Log</div>
+    <div class="log-box" id="log-box">
+      <div class="log-entry"><span class="log-time">--:--:-- </span>Waiting for actions…</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDWtxb7IsZmAMZs0oGmryp3vumu6jWhNpM",
+  authDomain: "schedule-d9e6d.firebaseapp.com",
+  databaseURL: "https://schedule-d9e6d-default-rtdb.firebaseio.com",
+  projectId: "schedule-d9e6d",
+  storageBucket: "schedule-d9e6d.firebasestorage.app",
+  messagingSenderId: "292184337443",
+  appId: "1:292184337443:web:4c76a5f1f70887692fd596"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+window._db  = db;
+window._ref = ref;
+window._set = set;
+
+// Connection status
+const connRef = ref(db, '.info/connected');
+onValue(connRef, (snap) => {
+  const ok = snap.val();
+  const dot  = document.getElementById('conn-dot');
+  const text = document.getElementById('conn-text');
+  if (dot)  { dot.className  = `conn-dot ${ok ? 'online' : 'offline'}`; }
+  if (text) { text.textContent = ok ? '🟢 Connected to Firebase' : '🔴 Disconnected'; }
+  addLog(ok ? 'Connected to Firebase' : 'Lost Firebase connection', ok ? 'ok' : 'err');
+});
+
+// Listen to admin/maintenance
+onValue(ref(db, 'admin/maintenance'), (snap) => {
+  const d = snap.val() || {};
+  const on = d.active === true;
+  const toggle = document.getElementById('maint-toggle');
+  const statusEl = document.getElementById('maint-status');
+  const statusTxt = document.getElementById('maint-status-text');
+  if (toggle) toggle.className = `toggle red${on ? ' on' : ''}`;
+  if (statusEl) statusEl.className = `status-pill ${on ? 'active' : 'inactive'}`;
+  if (statusTxt) statusTxt.textContent = on ? '🔴 MAINTENANCE ACTIVE' : 'Inactive';
+  if (d.message) { const el = document.getElementById('maint-msg'); if(el) el.value = d.message; }
+  if (d.eta)     { const el = document.getElementById('maint-eta');  if(el) el.value = d.eta; }
+});
+
+// Listen to admin/serverMessage
+onValue(ref(db, 'admin/serverMessage'), (snap) => {
+  const d = snap.val() || {};
+  const on = d.active === true;
+  const toggle = document.getElementById('msg-toggle');
+  const statusEl = document.getElementById('msg-status');
+  const statusTxt = document.getElementById('msg-status-text');
+  if (toggle) toggle.className = `toggle${on ? ' on' : ''}`;
+  if (statusEl) statusEl.className = `status-pill ${on ? 'active' : 'inactive'}`;
+  if (statusTxt) statusTxt.textContent = on ? `📢 LIVE: "${d.text || ''}"` : 'No active message';
+  if (d.text) { const el = document.getElementById('srv-msg-text'); if(el) el.value = d.text; updatePreview(); }
+  if (d.type) pickType(d.type, false);
+});
+</script>
+
+<script>
+/* ── ADMIN PASSWORD ── */
+// Change this to whatever password you want
+const ADMIN_PASSWORD = 'Berk@604#IS104';
+
+let isLoggedIn = false;
+let maintActive = false;
+let msgActive   = false;
+let selectedType = 'info';
+
+function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  if (pw === ADMIN_PASSWORD) {
+    isLoggedIn = true;
+    const ls = document.getElementById('login-screen');
+    ls.classList.add('gone');
+    setTimeout(() => ls.style.display = 'none', 400);
+    const panel = document.getElementById('panel');
+    panel.classList.add('visible');
+    addLog('Admin logged in', 'ok');
+  } else {
+    const err = document.getElementById('login-error');
+    err.style.display = 'block';
+    const inp = document.getElementById('login-pw');
+    inp.style.borderColor = '#E24B4A';
+    setTimeout(() => { err.style.display = 'none'; inp.style.borderColor = ''; }, 3000);
+    addLog('Failed login attempt', 'err');
+  }
+}
+
+function doLogout() {
+  isLoggedIn = false;
+  document.getElementById('panel').classList.remove('visible');
+  const ls = document.getElementById('login-screen');
+  ls.style.display = 'flex';
+  ls.classList.remove('gone');
+  document.getElementById('login-pw').value = '';
+  addLog('Admin logged out', 'warn');
+}
+
+/* ── MAINTENANCE ── */
+function toggleMaintenance() {
+  maintActive = !maintActive;
+  const toggle = document.getElementById('maint-toggle');
+  toggle.className = `toggle red${maintActive ? ' on' : ''}`;
+}
+
+async function pushMaintenance() {
+  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
+  const msg = document.getElementById('maint-msg').value.trim() || 'We\'ll be back shortly!';
+  const eta = document.getElementById('maint-eta').value.trim();
+  try {
+    await window._set(window._ref(window._db, 'admin/maintenance'), {
+      active: maintActive,
+      message: msg,
+      eta: eta,
+      updatedAt: Date.now(),
+    });
+    addLog(`Maintenance ${maintActive ? 'ENABLED' : 'disabled'} — "${msg}"${eta ? ` ETA: ${eta}` : ''}`, maintActive ? 'err' : 'ok');
+  } catch(e) {
+    addLog('Failed to push maintenance: ' + e.message, 'err');
+  }
+}
+
+/* ── SERVER MESSAGE ── */
+function toggleSrvMsg() {
+  msgActive = !msgActive;
+  const toggle = document.getElementById('msg-toggle');
+  toggle.className = `toggle${msgActive ? ' on' : ''}`;
+}
+
+function pickType(type, update = true) {
+  selectedType = type;
+  ['info','warning','success','error'].forEach(t => {
+    const btn = document.getElementById(`type-${t}`);
+    if (btn) btn.className = `type-btn ${t}${t === type ? ' active' : ''}`;
+  });
+  if (update) updatePreview();
+}
+
+function updatePreview() {
+  const text = document.getElementById('srv-msg-text').value || 'Your message will appear here…';
+  const styles = {
+    info:    { bg: 'rgba(55,138,221,0.15)',  color: '#378ADD', icon: '📢' },
+    warning: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '⚠️' },
+    success: { bg: 'rgba(29,158,117,0.15)', color: '#1D9E75', icon: '✅' },
+    error:   { bg: 'rgba(226,75,74,0.15)',  color: '#E24B4A', icon: '🚨' },
+  };
+  const s = styles[selectedType] || styles.info;
+  const preview = document.getElementById('msg-preview');
+  const previewText = document.getElementById('preview-text');
+  const previewIcon = document.getElementById('preview-icon');
+  if (preview) { preview.style.background = s.bg; preview.style.color = s.color; }
+  if (previewText) previewText.textContent = text;
+  if (previewIcon) previewIcon.textContent = s.icon;
+}
+
+async function pushServerMessage() {
+  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
+  const text = document.getElementById('srv-msg-text').value.trim();
+  if (!text) { addLog('Message text is empty!', 'warn'); return; }
+  msgActive = true;
+  document.getElementById('msg-toggle').className = 'toggle on';
+  try {
+    await window._set(window._ref(window._db, 'admin/serverMessage'), {
+      active: true,
+      text,
+      type: selectedType,
+      updatedAt: Date.now(),
+    });
+    addLog(`Server message sent [${selectedType}]: "${text}"`, 'ok');
+  } catch(e) {
+    addLog('Failed to send message: ' + e.message, 'err');
+  }
+}
+
+async function clearServerMessage() {
+  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
+  msgActive = false;
+  document.getElementById('msg-toggle').className = 'toggle';
+  try {
+    await window._set(window._ref(window._db, 'admin/serverMessage'), {
+      active: false, text: '', type: 'info', updatedAt: Date.now(),
+    });
+    addLog('Server message cleared', 'ok');
+  } catch(e) {
+    addLog('Failed to clear message: ' + e.message, 'err');
+  }
+}
+
+/* ── LOG ── */
+function addLog(msg, level = 'ok') {
+  const box = document.getElementById('log-box');
+  if (!box) return;
+  const now = new Date();
+  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  const cls = level === 'err' ? 'log-err' : level === 'warn' ? 'log-warn' : 'log-ok';
+  div.innerHTML = `<span class="log-time">${t} </span><span class="${cls}">[${level.toUpperCase()}]</span> ${msg}`;
+  // Remove placeholder
+  const placeholder = box.querySelector('.log-entry:only-child');
+  if (placeholder && placeholder.textContent.includes('Waiting')) placeholder.remove();
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+// allow Enter on login
+document.addEventListener('DOMContentLoaded', () => {
+  updatePreview();
+});
+</script>
+</body>
+</html>
