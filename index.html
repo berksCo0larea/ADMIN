@@ -7,238 +7,202 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0d0c; --bg2: #161514; --bg3: #1c1b1a;
-    --border: #2a2826; --border2: #383533;
-    --text: #f0ede8; --text2: #9e9b96; --text3: #5c5a56;
-    --accent: #f0ede8; --accent-inv: #0d0d0c;
-    --red: #E24B4A; --green: #1D9E75; --yellow: #f59e0b; --blue: #378ADD;
-    --card-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
-    --font: 'Nunito', sans-serif; --mono: 'JetBrains Mono', monospace;
+    --bg:#0d0d0c; --bg2:#161514; --bg3:#1c1b1a;
+    --border:#2a2826; --border2:#383533;
+    --text:#f0ede8; --text2:#9e9b96; --text3:#5c5a56;
+    --accent:#f0ede8; --accent-inv:#0d0d0c;
+    --red:#E24B4A; --green:#1D9E75; --yellow:#f59e0b; --blue:#378ADD;
+    --shadow:0 2px 12px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04);
+    --font:'Nunito',sans-serif; --mono:'JetBrains Mono',monospace;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 
-  /* ── LOGIN ── */
-  #login-screen {
-    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: var(--bg); z-index: 100; padding: 24px;
-    transition: opacity 0.4s, transform 0.4s;
+  /* LOGIN */
+  #login-screen{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:var(--bg);z-index:100;padding:24px;transition:opacity .4s,transform .4s;
   }
-  #login-screen.gone { opacity: 0; transform: scale(0.96); pointer-events: none; }
-  .login-box {
-    background: var(--bg2); border: 1.5px solid var(--border2); border-radius: 24px;
-    padding: 36px 32px; max-width: 380px; width: 100%;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  #login-screen.gone{opacity:0;transform:scale(.96);pointer-events:none}
+  .login-box{
+    background:var(--bg2);border:1.5px solid var(--border2);border-radius:24px;
+    padding:36px 32px;max-width:380px;width:100%;
+    box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);
   }
-  .login-logo { font-size: 40px; margin-bottom: 16px; }
-  .login-title { font-size: 24px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; }
-  .login-sub { font-size: 13px; color: var(--text3); font-weight: 700; margin-bottom: 28px; }
-  .login-label { font-size: 12px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; display: block; }
-  .login-input {
-    width: 100%; padding: 12px 16px; border-radius: 14px;
-    border: 1.5px solid var(--border2); background: var(--bg3);
-    font-family: var(--font); font-size: 15px; font-weight: 700;
-    color: var(--text); outline: none; margin-bottom: 16px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+  .login-logo{font-size:40px;margin-bottom:16px}
+  .login-title{font-size:24px;font-weight:900;margin-bottom:4px;letter-spacing:-.5px}
+  .login-sub{font-size:13px;color:var(--text3);font-weight:700;margin-bottom:28px}
+  /* shared label style used in both login + field sections */
+  .login-label,.field-label{
+    font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:block;
   }
-  .login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,237,232,0.08); }
-  .login-btn {
-    width: 100%; padding: 14px; border-radius: 14px;
-    background: var(--accent); color: var(--accent-inv);
-    font-family: var(--font); font-size: 15px; font-weight: 900;
-    border: none; cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, opacity 0.2s;
-    box-shadow: 0 4px 16px rgba(240,237,232,0.1);
+  .login-label{color:var(--text2);margin-bottom:8px}
+  .field-label{color:var(--text3)}
+  /* shared input base */
+  .login-input,.field-input{
+    width:100%;border-radius:12px;border:1.5px solid var(--border2);background:var(--bg3);
+    font-family:var(--font);font-weight:700;color:var(--text);outline:none;
+    transition:border-color .2s,box-shadow .2s;
   }
-  .login-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 28px rgba(240,237,232,0.15); }
-  .login-btn:active { transform: scale(0.97); }
-  .login-error { font-size: 13px; font-weight: 800; color: var(--red); margin-top: 10px; display: none; text-align: center; }
+  .login-input{padding:12px 16px;font-size:15px;border-radius:14px;margin-bottom:16px}
+  .field-input{padding:11px 14px;font-size:14px;margin-bottom:12px}
+  .login-input:focus,.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,237,232,.08)}
+  .login-btn{
+    width:100%;padding:14px;border-radius:14px;background:var(--accent);color:var(--accent-inv);
+    font-family:var(--font);font-size:15px;font-weight:900;border:none;cursor:pointer;
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+    box-shadow:0 4px 16px rgba(240,237,232,.1);
+  }
+  .login-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 28px rgba(240,237,232,.15)}
+  .login-btn:active{transform:scale(.97)}
+  .login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .login-error,.login-loading{font-size:13px;font-weight:800;margin-top:10px;display:none;text-align:center}
+  .login-error{color:var(--red)}
+  .login-loading{color:var(--text3)}
 
-  /* ── MAIN PANEL ── */
-  #panel { display: none; max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
-  #panel.visible { display: block; animation: fadeIn 0.4s ease; }
-
-  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-top: 8px; }
-  .panel-logo { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-  .panel-badge { font-size: 10px; font-weight: 900; background: var(--red); color: #fff; border-radius: 8px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .logout-btn {
-    background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 12px;
-    padding: 8px 16px; font-size: 13px; font-weight: 800; color: var(--text2);
-    cursor: pointer; font-family: var(--font);
-    transition: background 0.2s, color 0.2s, transform 0.2s;
+  /* PANEL */
+  #panel{display:none;max-width:640px;margin:0 auto;padding:20px 16px 48px}
+  #panel.visible{display:block;animation:fadeIn .4s ease}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-top:8px}
+  .panel-logo{font-size:24px;font-weight:900;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+  .panel-badge{font-size:10px;font-weight:900;background:var(--red);color:#fff;border-radius:8px;padding:3px 8px;text-transform:uppercase;letter-spacing:.06em}
+  .logout-btn{
+    background:var(--bg3);border:1.5px solid var(--border2);border-radius:12px;
+    padding:8px 16px;font-size:13px;font-weight:800;color:var(--text2);
+    cursor:pointer;font-family:var(--font);transition:background .2s,color .2s,transform .2s;
   }
-  .logout-btn:hover { background: var(--red); color: #fff; transform: scale(1.04); }
+  .logout-btn:hover{background:var(--red);color:#fff;transform:scale(1.04)}
 
-  /* connection status */
-  .conn-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 10px 14px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 14px; }
-  .conn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .conn-dot.online  { background: var(--green); animation: pulse 1.5s infinite; }
-  .conn-dot.offline { background: var(--red); }
-  .conn-dot.connecting { background: var(--yellow); animation: pulse 0.8s infinite; }
-  .conn-text { font-size: 13px; font-weight: 800; }
+  /* CONNECTION ROW */
+  .conn-row{display:flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:14px}
+  .conn-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .conn-dot.online{background:var(--green);animation:pulse 1.5s infinite}
+  .conn-dot.offline{background:var(--red)}
+  .conn-dot.connecting{background:var(--yellow);animation:pulse .8s infinite}
+  .conn-text{font-size:13px;font-weight:800}
 
-  /* section */
-  .section { margin-bottom: 16px; }
-  .section-title { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; padding-left: 2px; }
+  /* SECTION + CARD */
+  .section{margin-bottom:16px}
+  .section-title{font-size:11px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-left:2px}
+  .card{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+  .card-title{font-size:16px;font-weight:900;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .card-desc{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:18px;line-height:1.5}
 
-  /* card */
-  .card {
-    background: var(--bg2); border: 1.5px solid var(--border);
-    border-radius: 20px; padding: 20px;
-    box-shadow: var(--card-shadow);
-    transition: border-color 0.2s;
+  /* TOGGLE */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .toggle-label{font-size:14px;font-weight:800;color:var(--text2)}
+  .toggle{position:relative;width:52px;height:28px;border-radius:14px;background:var(--border2);border:none;cursor:pointer;transition:background .3s;flex-shrink:0}
+  .toggle.on{background:var(--green)}
+  .toggle.red.on{background:var(--red)}
+  .toggle::after{
+    content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+    background:#fff;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.3);
   }
-  .card-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-  .card-desc  { font-size: 13px; color: var(--text2); font-weight: 600; margin-bottom: 18px; line-height: 1.5; }
+  .toggle.on::after{transform:translateX(24px)}
 
-  /* toggle */
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .toggle-label { font-size: 14px; font-weight: 800; color: var(--text2); }
-  .toggle {
-    position: relative; width: 52px; height: 28px; border-radius: 14px;
-    background: var(--border2); border: none; cursor: pointer;
-    transition: background 0.3s; flex-shrink: 0;
+  /* TYPE GRID */
+  .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .type-btn{
+    padding:10px 6px;border-radius:12px;border:1.5px solid var(--border2);
+    background:var(--bg3);font-family:var(--font);font-size:12px;font-weight:800;
+    color:var(--text2);cursor:pointer;text-align:center;
+    transition:transform .2s,border-color .2s,background .2s,color .2s;
   }
-  .toggle.on { background: var(--green); }
-  .toggle::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: #fff; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
-  .toggle.on::after { transform: translateX(24px); }
-  .toggle.red.on { background: var(--red); }
+  .type-btn:hover,.type-btn.active{transform:scale(1.05)}
+  .type-btn.info.active   {background:var(--blue);  color:#fff;border-color:var(--blue)}
+  .type-btn.warning.active{background:var(--yellow);color:#fff;border-color:var(--yellow)}
+  .type-btn.success.active{background:var(--green); color:#fff;border-color:var(--green)}
+  .type-btn.error.active  {background:var(--red);   color:#fff;border-color:var(--red)}
 
-  /* input */
-  .field-label { font-size: 12px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: block; }
-  .field-input {
-    width: 100%; padding: 11px 14px; border-radius: 12px;
-    border: 1.5px solid var(--border2); background: var(--bg3);
-    font-family: var(--font); font-size: 14px; font-weight: 700;
-    color: var(--text); outline: none; margin-bottom: 12px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+  /* ACTION BUTTON */
+  .action-btn{
+    width:100%;padding:13px;border-radius:14px;font-family:var(--font);font-size:14px;font-weight:900;
+    border:none;cursor:pointer;margin-top:4px;
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
   }
-  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,237,232,0.07); }
+  .action-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+  .action-btn:active{transform:scale(.97)}
+  .action-btn.primary  {background:var(--accent);color:var(--accent-inv)}
+  .action-btn.danger   {background:var(--red);color:#fff}
+  .action-btn.secondary{background:var(--bg3);color:var(--text2);border:1.5px solid var(--border2)}
 
-  /* type selector */
-  .type-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
-  .type-btn {
-    padding: 10px 6px; border-radius: 12px; border: 1.5px solid var(--border2);
-    background: var(--bg3); font-family: var(--font); font-size: 12px; font-weight: 800;
-    color: var(--text2); cursor: pointer; text-align: center;
-    transition: transform 0.2s, border-color 0.2s, background 0.2s, color 0.2s;
+  /* STATUS PILL */
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;margin-top:10px}
+  .status-pill.active  {background:rgba(229,75,74,.15);color:var(--red);border:1.5px solid rgba(229,75,74,.3)}
+  .status-pill.inactive{background:rgba(92,90,86,.2);color:var(--text3);border:1.5px solid var(--border)}
+  .status-pill-dot{width:6px;height:6px;border-radius:50%}
+  .status-pill.active   .status-pill-dot{background:var(--red);animation:pulse 1s infinite}
+  .status-pill.inactive .status-pill-dot{background:var(--text3)}
+
+  /* PREVIEW BANNER */
+  .preview-banner{border-radius:12px;padding:10px 14px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:12px;transition:background .3s}
+
+  /* LOG */
+  .log-section{margin-top:20px}
+  .log-box{
+    background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;
+    padding:14px;max-height:160px;overflow-y:auto;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text3);
   }
-  .type-btn:hover { transform: scale(1.05); border-color: var(--border2); }
-  .type-btn.active { transform: scale(1.05); }
-  .type-btn.info.active    { background: var(--blue);   color: #fff; border-color: var(--blue); }
-  .type-btn.warning.active { background: var(--yellow); color: #fff; border-color: var(--yellow); }
-  .type-btn.success.active { background: var(--green);  color: #fff; border-color: var(--green); }
-  .type-btn.error.active   { background: var(--red);    color: #fff; border-color: var(--red); }
+  .log-box::-webkit-scrollbar{width:4px}
+  .log-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  .log-entry{padding:3px 0;border-bottom:1px solid var(--border)}
+  .log-entry:last-child{border-bottom:none}
+  .log-entry .ts{color:var(--text3)}
+  .log-entry .ok  {color:var(--green)}
+  .log-entry .err {color:var(--red)}
+  .log-entry .warn{color:var(--yellow)}
 
-  /* action button */
-  .action-btn {
-    width: 100%; padding: 13px; border-radius: 14px;
-    font-family: var(--font); font-size: 14px; font-weight: 900;
-    border: none; cursor: pointer; margin-top: 4px;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, opacity 0.2s;
-  }
-  .action-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
-  .action-btn:active { transform: scale(0.97); }
-  .action-btn.primary   { background: var(--accent); color: var(--accent-inv); }
-  .action-btn.danger    { background: var(--red); color: #fff; }
-  .action-btn.success   { background: var(--green); color: #fff; }
-  .action-btn.secondary { background: var(--bg3); color: var(--text2); border: 1.5px solid var(--border2); }
-
-  /* status pill */
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;
-    margin-top: 10px;
-  }
-  .status-pill.active   { background: rgba(229,75,74,0.15); color: var(--red); border: 1.5px solid rgba(229,75,74,0.3); }
-  .status-pill.inactive { background: rgba(92,90,86,0.2); color: var(--text3); border: 1.5px solid var(--border); }
-  .status-pill-dot { width: 6px; height: 6px; border-radius: 50%; }
-  .status-pill.active .status-pill-dot   { background: var(--red); animation: pulse 1s infinite; }
-  .status-pill.inactive .status-pill-dot { background: var(--text3); }
-
-  /* log */
-  .log-section { margin-top: 20px; }
-  .log-box {
-    background: var(--bg3); border: 1.5px solid var(--border); border-radius: 14px;
-    padding: 14px; max-height: 160px; overflow-y: auto; font-family: var(--mono);
-    font-size: 12px; font-weight: 500; color: var(--text3);
-  }
-  .log-box::-webkit-scrollbar { width: 4px; }
-  .log-box::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-  .log-entry { padding: 3px 0; border-bottom: 1px solid var(--border); }
-  .log-entry:last-child { border-bottom: none; }
-  .log-entry .log-time { color: var(--text3); }
-  .log-entry .log-ok   { color: var(--green); }
-  .log-entry .log-err  { color: var(--red); }
-  .log-entry .log-warn { color: var(--yellow); }
-
-  /* preview banner */
-  .preview-banner {
-    border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 800;
-    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
-    transition: background 0.3s;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse  { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">🔐</div>
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">P.S./I.S. 104 · Schedule System</div>
+    <label class="login-label">Email</label>
+    <input id="login-email" class="login-input" type="email" placeholder="admin@example.com"
+           autocomplete="email" onkeydown="if(event.key==='Enter')$.pw.focus()">
     <label class="login-label">Password</label>
-    <input class="login-input" id="login-pw" type="password" placeholder="Enter admin password…" onkeydown="if(event.key==='Enter')doLogin()" />
-    <button class="login-btn" onclick="doLogin()">Sign In →</button>
-    <div class="login-error" id="login-error">❌ Wrong password. Try again.</div>
+    <input id="login-pw" class="login-input" type="password" placeholder="Enter admin password…"
+           autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button id="login-btn" class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div id="login-loading" class="login-loading">⏳ Signing in…</div>
+    <div id="login-error"   class="login-error">❌ Access denied. Check credentials.</div>
   </div>
 </div>
 
-<!-- ══ MAIN PANEL ══ -->
+<!-- PANEL -->
 <div id="panel">
-
   <div class="panel-header">
-    <div class="panel-logo">
-      📅 Admin
-      <span class="panel-badge">Staff Only</span>
-    </div>
+    <div class="panel-logo">📅 Admin <span class="panel-badge">Staff Only</span></div>
     <button class="logout-btn" onclick="doLogout()">Sign Out</button>
   </div>
 
   <div class="conn-row">
-    <div class="conn-dot connecting" id="conn-dot"></div>
-    <div class="conn-text" id="conn-text">Connecting to Firebase…</div>
+    <div id="conn-dot" class="conn-dot connecting"></div>
+    <div id="conn-text" class="conn-text">Connecting to Firebase…</div>
   </div>
 
-  <!-- ── MAINTENANCE ── -->
+  <!-- MAINTENANCE -->
   <div class="section">
     <div class="section-title">🔧 Maintenance Mode</div>
     <div class="card">
       <div class="card-title">Server Lockdown</div>
       <div class="card-desc">When enabled, all users see a full-screen maintenance overlay and cannot use the app. Toggle off to restore access instantly.</div>
-
       <div class="toggle-row">
         <span class="toggle-label">Maintenance Active</span>
-        <button class="toggle red" id="maint-toggle" onclick="toggleMaintenance()"></button>
+        <button id="maint-toggle" class="toggle red" onclick="flipToggle('maint')"></button>
       </div>
-
       <label class="field-label">Message shown to users</label>
-      <input class="field-input" id="maint-msg" type="text" placeholder="We'll be back shortly!" maxlength="120" value="We'll be back shortly!" />
-
+      <input id="maint-msg" class="field-input" type="text" maxlength="120" placeholder="We'll be back shortly!" value="We'll be back shortly!">
       <label class="field-label">ETA (optional)</label>
-      <input class="field-input" id="maint-eta" type="text" placeholder="e.g. 5 minutes, 3:30 PM…" maxlength="60" />
-
+      <input id="maint-eta" class="field-input" type="text" maxlength="60" placeholder="e.g. 5 minutes, 3:30 PM…">
       <button class="action-btn danger" onclick="pushMaintenance()">🔧 Push Maintenance Settings</button>
-
       <div id="maint-status" class="status-pill inactive">
         <div class="status-pill-dot"></div>
         <span id="maint-status-text">Inactive</span>
@@ -246,37 +210,31 @@
     </div>
   </div>
 
-  <!-- ── SERVER MESSAGE ── -->
+  <!-- SERVER MESSAGE -->
   <div class="section">
     <div class="section-title">📢 Server Message</div>
     <div class="card">
       <div class="card-title">Broadcast Banner</div>
       <div class="card-desc">Sends a dismissible banner to all users at the top of their screen in real time. Choose a type for color coding.</div>
-
-      <div class="preview-banner" id="msg-preview" style="background:rgba(55,138,221,0.15);color:#378ADD;">
+      <div id="msg-preview" class="preview-banner" style="background:rgba(55,138,221,.15);color:#378ADD;">
         <span id="preview-icon">📢</span>
         <span id="preview-text">Your message will appear here…</span>
       </div>
-
       <label class="field-label">Message text</label>
-      <input class="field-input" id="srv-msg-text" type="text" placeholder="Type your message…" maxlength="200" oninput="updatePreview()" />
-
+      <input id="srv-msg-text" class="field-input" type="text" maxlength="200" placeholder="Type your message…" oninput="updatePreview()">
       <label class="field-label">Message type</label>
       <div class="type-grid">
-        <button class="type-btn info active"    id="type-info"    onclick="pickType('info')">📢 Info</button>
-        <button class="type-btn warning"         id="type-warning" onclick="pickType('warning')">⚠️ Warn</button>
-        <button class="type-btn success"         id="type-success" onclick="pickType('success')">✅ Good</button>
-        <button class="type-btn error"           id="type-error"   onclick="pickType('error')">🚨 Alert</button>
+        <button id="type-info"    class="type-btn info active" onclick="pickType('info')"   >📢 Info</button>
+        <button id="type-warning" class="type-btn warning"     onclick="pickType('warning')">⚠️ Warn</button>
+        <button id="type-success" class="type-btn success"     onclick="pickType('success')">✅ Good</button>
+        <button id="type-error"   class="type-btn error"       onclick="pickType('error')"  >🚨 Alert</button>
       </div>
-
       <div class="toggle-row">
         <span class="toggle-label">Show banner to users</span>
-        <button class="toggle" id="msg-toggle" onclick="toggleSrvMsg()"></button>
+        <button id="msg-toggle" class="toggle" onclick="flipToggle('msg')"></button>
       </div>
-
       <button class="action-btn primary" onclick="pushServerMessage()">📢 Send Server Message</button>
-      <button class="action-btn secondary" style="margin-top:8px;" onclick="clearServerMessage()">✕ Clear / Hide Banner</button>
-
+      <button class="action-btn secondary" style="margin-top:8px" onclick="clearServerMessage()">✕ Clear / Hide Banner</button>
       <div id="msg-status" class="status-pill inactive">
         <div class="status-pill-dot"></div>
         <span id="msg-status-text">No active message</span>
@@ -284,229 +242,272 @@
     </div>
   </div>
 
-  <!-- ── LOG ── -->
+  <!-- LOG -->
   <div class="log-section">
     <div class="section-title">📋 Action Log</div>
-    <div class="log-box" id="log-box">
-      <div class="log-entry"><span class="log-time">--:--:-- </span>Waiting for actions…</div>
+    <div id="log-box" class="log-box">
+      <div class="log-entry"><span class="ts">--:--:-- </span>Waiting for actions…</div>
     </div>
   </div>
-
 </div>
 
-<!-- Firebase -->
+<!-- Firebase (module scope: Auth + DB wiring) -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDWtxb7IsZmAMZs0oGmryp3vumu6jWhNpM",
-  authDomain: "schedule-d9e6d.firebaseapp.com",
-  databaseURL: "https://schedule-d9e6d-default-rtdb.firebaseio.com",
-  projectId: "schedule-d9e6d",
-  storageBucket: "schedule-d9e6d.firebasestorage.app",
+const ADMIN_UID = "8fQejoQtcigStgoCADAkufqie6D3";
+
+const app  = initializeApp({
+  apiKey:            "AIzaSyDWtxb7IsZmAMZs0oGmryp3vumu6jWhNpM",
+  authDomain:        "schedule-d9e6d.firebaseapp.com",
+  databaseURL:       "https://schedule-d9e6d-default-rtdb.firebaseio.com",
+  projectId:         "schedule-d9e6d",
+  storageBucket:     "schedule-d9e6d.firebasestorage.app",
   messagingSenderId: "292184337443",
-  appId: "1:292184337443:web:4c76a5f1f70887692fd596"
-};
+  appId:             "1:292184337443:web:4c76a5f1f70887692fd596"
+});
+const db   = getDatabase(app);
+const auth = getAuth(app);
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+/* Expose to global script */
+window._fb = { login: (e,p) => signInWithEmailAndPassword(auth,e,p), logout: () => signOut(auth) };
 
-window._db  = db;
-window._ref = ref;
-window._set = set;
+/* ── Auth gate ── */
+onAuthStateChanged(auth, user => {
+  if (user && user.uid === ADMIN_UID) {
+    showPanel(); log(`Authenticated as ${user.email}`, 'ok');
+  } else {
+    if (user) { signOut(auth); log('Unauthorised UID — denied', 'err'); }
+    showLogin();
+  }
+});
 
-// Connection status
-const connRef = ref(db, '.info/connected');
-onValue(connRef, (snap) => {
+/* ── Connection dot ── */
+onValue(ref(db, '.info/connected'), snap => {
   const ok = snap.val();
-  const dot  = document.getElementById('conn-dot');
-  const text = document.getElementById('conn-text');
-  if (dot)  { dot.className  = `conn-dot ${ok ? 'online' : 'offline'}`; }
-  if (text) { text.textContent = ok ? '🟢 Connected to Firebase' : '🔴 Disconnected'; }
-  addLog(ok ? 'Connected to Firebase' : 'Lost Firebase connection', ok ? 'ok' : 'err');
+  $.connDot.className  = `conn-dot ${ok ? 'online' : 'offline'}`;
+  $.connText.textContent = ok ? '🟢 Connected to Firebase' : '🔴 Disconnected';
+  log(ok ? 'Connected to Firebase' : 'Lost Firebase connection', ok ? 'ok' : 'err');
 });
 
-// Listen to admin/maintenance
-onValue(ref(db, 'admin/maintenance'), (snap) => {
-  const d = snap.val() || {};
+/* ── Maintenance listener ── */
+onValue(ref(db, 'admin/maintenance'), snap => {
+  const d  = snap.val() || {};
   const on = d.active === true;
-  const toggle = document.getElementById('maint-toggle');
-  const statusEl = document.getElementById('maint-status');
-  const statusTxt = document.getElementById('maint-status-text');
-  if (toggle) toggle.className = `toggle red${on ? ' on' : ''}`;
-  if (statusEl) statusEl.className = `status-pill ${on ? 'active' : 'inactive'}`;
-  if (statusTxt) statusTxt.textContent = on ? '🔴 MAINTENANCE ACTIVE' : 'Inactive';
-  if (d.message) { const el = document.getElementById('maint-msg'); if(el) el.value = d.message; }
-  if (d.eta)     { const el = document.getElementById('maint-eta');  if(el) el.value = d.eta; }
+  setToggle('maint', on, true);
+  setPill('maint', on, on ? '🔴 MAINTENANCE ACTIVE' : 'Inactive');
+  if (d.message) $.maintMsg.value = d.message;
+  if (d.eta)     $.maintEta.value = d.eta;
+  S.maint = on;
 });
 
-// Listen to admin/serverMessage
-onValue(ref(db, 'admin/serverMessage'), (snap) => {
-  const d = snap.val() || {};
+/* ── Server message listener ── */
+onValue(ref(db, 'admin/serverMessage'), snap => {
+  const d  = snap.val() || {};
   const on = d.active === true;
-  const toggle = document.getElementById('msg-toggle');
-  const statusEl = document.getElementById('msg-status');
-  const statusTxt = document.getElementById('msg-status-text');
-  if (toggle) toggle.className = `toggle${on ? ' on' : ''}`;
-  if (statusEl) statusEl.className = `status-pill ${on ? 'active' : 'inactive'}`;
-  if (statusTxt) statusTxt.textContent = on ? `📢 LIVE: "${d.text || ''}"` : 'No active message';
-  if (d.text) { const el = document.getElementById('srv-msg-text'); if(el) el.value = d.text; updatePreview(); }
-  if (d.type) pickType(d.type, false);
+  setToggle('msg', on, false);
+  setPill('msg', on, on ? `📢 LIVE: "${d.text || ''}"` : 'No active message');
+  if (d.text) { $.srvMsg.value = d.text; updatePreview(); }
+  if (d.type)  pickType(d.type, false);
+  S.msg = on;
 });
+
+/* ── dbSet helper ── */
+window._dbSet = (path, data) => set(ref(db, path), { ...data, updatedAt: Date.now() });
+
+/* ── UI transition helpers (need DOM; defined here for auth gate) ── */
+window._showPanel = () => {
+  $.login.classList.add('gone');
+  setTimeout(() => { $.login.style.display = 'none'; }, 400);
+  $.panel.classList.add('visible');
+  setLoading(false);
+};
+window._showLogin = () => {
+  $.panel.classList.remove('visible');
+  $.login.style.display = 'flex';
+  $.login.classList.remove('gone');
+  $.email.value = $.pw.value = '';
+  setLoading(false);
+};
+function showPanel() { window._showPanel(); }
+function showLogin() { window._showLogin(); }
 </script>
 
+<!-- Global script: DOM cache, state, UI handlers -->
 <script>
-/* ── ADMIN PASSWORD ── */
-// Change this to whatever password you want
-const ADMIN_PASSWORD = 'Berk@604#IS104';
+/* ── Cached DOM refs ── */
+const $ = {
+  login:         document.getElementById('login-screen'),
+  panel:         document.getElementById('panel'),
+  email:         document.getElementById('login-email'),
+  pw:            document.getElementById('login-pw'),
+  loginBtn:      document.getElementById('login-btn'),
+  loginLoad:     document.getElementById('login-loading'),
+  loginErr:      document.getElementById('login-error'),
+  connDot:       document.getElementById('conn-dot'),
+  connText:      document.getElementById('conn-text'),
+  maintToggle:   document.getElementById('maint-toggle'),
+  maintStatus:   document.getElementById('maint-status'),
+  maintStatusTxt:document.getElementById('maint-status-text'),
+  maintMsg:      document.getElementById('maint-msg'),
+  maintEta:      document.getElementById('maint-eta'),
+  msgToggle:     document.getElementById('msg-toggle'),
+  msgStatus:     document.getElementById('msg-status'),
+  msgStatusTxt:  document.getElementById('msg-status-text'),
+  srvMsg:        document.getElementById('srv-msg-text'),
+  preview:       document.getElementById('msg-preview'),
+  previewIcon:   document.getElementById('preview-icon'),
+  previewText:   document.getElementById('preview-text'),
+  logBox:        document.getElementById('log-box'),
+};
 
-let isLoggedIn = false;
-let maintActive = false;
-let msgActive   = false;
-let selectedType = 'info';
+/* ── App state ── */
+const S = { maint: false, msg: false, msgType: 'info' };
 
-function doLogin() {
-  const pw = document.getElementById('login-pw').value;
-  if (pw === ADMIN_PASSWORD) {
-    isLoggedIn = true;
-    const ls = document.getElementById('login-screen');
-    ls.classList.add('gone');
-    setTimeout(() => ls.style.display = 'none', 400);
-    const panel = document.getElementById('panel');
-    panel.classList.add('visible');
-    addLog('Admin logged in', 'ok');
-  } else {
-    const err = document.getElementById('login-error');
-    err.style.display = 'block';
-    const inp = document.getElementById('login-pw');
-    inp.style.borderColor = '#E24B4A';
-    setTimeout(() => { err.style.display = 'none'; inp.style.borderColor = ''; }, 3000);
-    addLog('Failed login attempt', 'err');
+/* ── Message type styles ── */
+const TYPE = {
+  info:    { bg:'rgba(55,138,221,.15)',  color:'#378ADD', icon:'📢' },
+  warning: { bg:'rgba(245,158,11,.15)', color:'#f59e0b', icon:'⚠️' },
+  success: { bg:'rgba(29,158,117,.15)', color:'#1D9E75', icon:'✅' },
+  error:   { bg:'rgba(226,75,74,.15)',  color:'#E24B4A', icon:'🚨' },
+};
+
+/* ── Shared helpers ── */
+function setToggle(key, on, red) {
+  const el = key === 'maint' ? $.maintToggle : $.msgToggle;
+  el.className = `toggle${red ? ' red' : ''}${on ? ' on' : ''}`;
+}
+function setPill(key, on, text) {
+  const el  = key === 'maint' ? $.maintStatus    : $.msgStatus;
+  const txt = key === 'maint' ? $.maintStatusTxt : $.msgStatusTxt;
+  el.className = `status-pill ${on ? 'active' : 'inactive'}`;
+  txt.textContent = text;
+}
+function setLoading(on) {
+  $.loginBtn.disabled    = on;
+  $.loginBtn.textContent = on ? 'Signing in…' : 'Sign In →';
+  $.loginLoad.style.display = on ? 'block' : 'none';
+}
+function showError(msg, ms = 4000) {
+  $.loginErr.textContent    = msg;
+  $.loginErr.style.display  = 'block';
+  $.email.style.borderColor = $.pw.style.borderColor = '#E24B4A';
+  setTimeout(() => {
+    $.loginErr.style.display = 'none';
+    $.email.style.borderColor = $.pw.style.borderColor = '';
+  }, ms);
+}
+function log(msg, level = 'ok') {
+  const now = new Date();
+  const t   = [now.getHours(), now.getMinutes(), now.getSeconds()]
+                .map(n => String(n).padStart(2,'0')).join(':');
+  const cls = level === 'err' ? 'err' : level === 'warn' ? 'warn' : 'ok';
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = `<span class="ts">${t} </span><span class="${cls}">[${level.toUpperCase()}]</span> ${msg}`;
+  const ph = $.logBox.querySelector('.log-entry:only-child');
+  if (ph?.textContent.includes('Waiting')) ph.remove();
+  $.logBox.appendChild(div);
+  $.logBox.scrollTop = $.logBox.scrollHeight;
+}
+function toast(msg, bg = '#1D9E75') {
+  let el = document.getElementById('_toast');
+  if (!el) {
+    el = Object.assign(document.createElement('div'), { id: '_toast' });
+    el.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);color:#fff;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;padding:12px 22px;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.4);z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;white-space:nowrap;max-width:90vw;text-align:center;';
+    document.body.appendChild(el);
   }
+  el.textContent = msg;
+  el.style.background = bg;
+  el.style.opacity = '1';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(80px)'; }, 3500);
+}
+function dbGuard() {
+  if (!window._dbSet) { log('Firebase not ready','err'); return false; }
+  return true;
 }
 
-function doLogout() {
-  isLoggedIn = false;
-  document.getElementById('panel').classList.remove('visible');
-  const ls = document.getElementById('login-screen');
-  ls.style.display = 'flex';
-  ls.classList.remove('gone');
-  document.getElementById('login-pw').value = '';
-  addLog('Admin logged out', 'warn');
+/* ── AUTH ── */
+async function doLogin() {
+  const email = $.email.value.trim(), pw = $.pw.value;
+  if (!email || !pw) { showError('❌ Please enter your email and password.', 3000); return; }
+  setLoading(true);
+  try {
+    await window._fb.login(email, pw);
+  } catch (e) {
+    setLoading(false);
+    showError('❌ Access denied. Check credentials.');
+    log(`Failed login (${e.code || e.message})`, 'err');
+  }
+}
+async function doLogout() {
+  await window._fb.logout();
+  log('Admin signed out', 'warn');
+}
+
+/* ── TOGGLE (shared for maint + msg) ── */
+function flipToggle(key) {
+  S[key] = !S[key];
+  setToggle(key, S[key], key === 'maint');
 }
 
 /* ── MAINTENANCE ── */
-function toggleMaintenance() {
-  maintActive = !maintActive;
-  const toggle = document.getElementById('maint-toggle');
-  toggle.className = `toggle red${maintActive ? ' on' : ''}`;
-}
-
 async function pushMaintenance() {
-  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
-  const msg = document.getElementById('maint-msg').value.trim() || 'We\'ll be back shortly!';
-  const eta = document.getElementById('maint-eta').value.trim();
+  if (!dbGuard()) return;
+  const msg = $.maintMsg.value.trim() || "We'll be back shortly!";
+  const eta = $.maintEta.value.trim();
   try {
-    await window._set(window._ref(window._db, 'admin/maintenance'), {
-      active: maintActive,
-      message: msg,
-      eta: eta,
-      updatedAt: Date.now(),
-    });
-    addLog(`Maintenance ${maintActive ? 'ENABLED' : 'disabled'} — "${msg}"${eta ? ` ETA: ${eta}` : ''}`, maintActive ? 'err' : 'ok');
-  } catch(e) {
-    addLog('Failed to push maintenance: ' + e.message, 'err');
-  }
+    await window._dbSet('admin/maintenance', { active: S.maint, message: msg, eta });
+    log(`Maintenance ${S.maint ? 'ENABLED' : 'disabled'} — "${msg}"${eta ? ` ETA:${eta}` : ''}`, S.maint ? 'err' : 'ok');
+    toast(S.maint ? '🔧 Maintenance enabled!' : '✅ Maintenance disabled!', S.maint ? '#E24B4A' : '#1D9E75');
+  } catch(e) { log('Push failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
 }
 
 /* ── SERVER MESSAGE ── */
-function toggleSrvMsg() {
-  msgActive = !msgActive;
-  const toggle = document.getElementById('msg-toggle');
-  toggle.className = `toggle${msgActive ? ' on' : ''}`;
-}
-
 function pickType(type, update = true) {
-  selectedType = type;
+  S.msgType = type;
   ['info','warning','success','error'].forEach(t => {
-    const btn = document.getElementById(`type-${t}`);
-    if (btn) btn.className = `type-btn ${t}${t === type ? ' active' : ''}`;
+    document.getElementById(`type-${t}`).className = `type-btn ${t}${t===type?' active':''}`;
   });
   if (update) updatePreview();
 }
-
 function updatePreview() {
-  const text = document.getElementById('srv-msg-text').value || 'Your message will appear here…';
-  const styles = {
-    info:    { bg: 'rgba(55,138,221,0.15)',  color: '#378ADD', icon: '📢' },
-    warning: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '⚠️' },
-    success: { bg: 'rgba(29,158,117,0.15)', color: '#1D9E75', icon: '✅' },
-    error:   { bg: 'rgba(226,75,74,0.15)',  color: '#E24B4A', icon: '🚨' },
-  };
-  const s = styles[selectedType] || styles.info;
-  const preview = document.getElementById('msg-preview');
-  const previewText = document.getElementById('preview-text');
-  const previewIcon = document.getElementById('preview-icon');
-  if (preview) { preview.style.background = s.bg; preview.style.color = s.color; }
-  if (previewText) previewText.textContent = text;
-  if (previewIcon) previewIcon.textContent = s.icon;
+  const s    = TYPE[S.msgType] || TYPE.info;
+  const text = $.srvMsg.value || 'Your message will appear here…';
+  $.preview.style.background = s.bg;
+  $.preview.style.color      = s.color;
+  $.previewIcon.textContent  = s.icon;
+  $.previewText.textContent  = text;
 }
-
 async function pushServerMessage() {
-  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
-  const text = document.getElementById('srv-msg-text').value.trim();
-  if (!text) { addLog('Message text is empty!', 'warn'); return; }
-  msgActive = true;
-  document.getElementById('msg-toggle').className = 'toggle on';
+  if (!dbGuard()) return;
+  const text = $.srvMsg.value.trim();
+  if (!text) { log('Message text empty','warn'); toast('⚠️ Message text is empty!','#f59e0b'); return; }
+  S.msg = true;
+  setToggle('msg', true, false);
   try {
-    await window._set(window._ref(window._db, 'admin/serverMessage'), {
-      active: true,
-      text,
-      type: selectedType,
-      updatedAt: Date.now(),
-    });
-    addLog(`Server message sent [${selectedType}]: "${text}"`, 'ok');
-  } catch(e) {
-    addLog('Failed to send message: ' + e.message, 'err');
-  }
+    await window._dbSet('admin/serverMessage', { active: true, text, type: S.msgType });
+    log(`Message sent [${S.msgType}]: "${text}"`, 'ok');
+    toast('📢 Message sent to all users!', '#1D9E75');
+  } catch(e) { log('Send failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
 }
-
 async function clearServerMessage() {
-  if (!window._db) { addLog('Firebase not ready', 'err'); return; }
-  msgActive = false;
-  document.getElementById('msg-toggle').className = 'toggle';
+  if (!dbGuard()) return;
+  S.msg = false;
+  setToggle('msg', false, false);
   try {
-    await window._set(window._ref(window._db, 'admin/serverMessage'), {
-      active: false, text: '', type: 'info', updatedAt: Date.now(),
-    });
-    addLog('Server message cleared', 'ok');
-  } catch(e) {
-    addLog('Failed to clear message: ' + e.message, 'err');
-  }
+    await window._dbSet('admin/serverMessage', { active: false, text:'', type:'info' });
+    log('Server message cleared','ok');
+    toast('✅ Banner cleared!','#1D9E75');
+  } catch(e) { log('Clear failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
 }
 
-/* ── LOG ── */
-function addLog(msg, level = 'ok') {
-  const box = document.getElementById('log-box');
-  if (!box) return;
-  const now = new Date();
-  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-  const div = document.createElement('div');
-  div.className = 'log-entry';
-  const cls = level === 'err' ? 'log-err' : level === 'warn' ? 'log-warn' : 'log-ok';
-  div.innerHTML = `<span class="log-time">${t} </span><span class="${cls}">[${level.toUpperCase()}]</span> ${msg}`;
-  // Remove placeholder
-  const placeholder = box.querySelector('.log-entry:only-child');
-  if (placeholder && placeholder.textContent.includes('Waiting')) placeholder.remove();
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-// allow Enter on login
-document.addEventListener('DOMContentLoaded', () => {
-  updatePreview();
-});
+/* Init */
+updatePreview();
 </script>
 </body>
 </html>
