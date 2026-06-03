@@ -203,6 +203,35 @@
   }
   .override-summary.visible{display:block;}
 
+  /* ── ISMAIL PRESENCE CARD ── */
+  .ismail-card{
+    background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;
+    padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow);
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .ismail-left{display:flex;align-items:center;gap:10px;}
+  .ismail-avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--blue);
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:900;color:#fff;flex-shrink:0;
+  }
+  .ismail-name{font-size:14px;font-weight:900;color:var(--text);}
+  .ismail-presence{font-size:12px;font-weight:700;color:var(--text3);margin-top:1px;}
+  .ismail-online-dot{
+    width:9px;height:9px;border-radius:50%;background:var(--green);
+    animation:pulse 1.5s infinite;display:inline-block;margin-right:4px;vertical-align:middle;
+  }
+  .ismail-offline-dot{
+    width:9px;height:9px;border-radius:50%;background:var(--text3);
+    display:inline-block;margin-right:4px;vertical-align:middle;
+  }
+  .ismail-last-action{
+    font-size:12px;font-weight:700;color:var(--text3);text-align:right;
+    background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+    padding:6px 12px;line-height:1.5;max-width:220px;
+  }
+  .ismail-last-action strong{display:block;font-size:11px;font-weight:900;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;}
+
   @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes pulse {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
 </style>
@@ -237,12 +266,29 @@
     <div id="conn-text" class="conn-text">Connecting to Firebase…</div>
   </div>
 
+  <!-- ISMAIL PRESENCE -->
+  <div class="ismail-card">
+    <div class="ismail-left">
+      <div class="ismail-avatar">I</div>
+      <div>
+        <div class="ismail-name">Ismail</div>
+        <div class="ismail-presence" id="ismail-presence">
+          <span class="ismail-offline-dot"></span>Checking…
+        </div>
+      </div>
+    </div>
+    <div class="ismail-last-action" id="ismail-last-action">
+      <strong>Last Action</strong>
+      No actions yet
+    </div>
+  </div>
+
   <div class="rules-card">
     <strong>⚠️ Server-side Firebase Rules required</strong>
     All writes are rejected by Firebase unless your Realtime Database rules contain:<br>
     <code>"admin": { ".read": "auth != null && auth.uid === 'ADMIN_UID'", ".write": "auth != null && auth.uid === 'ADMIN_UID'" }</code><br>
-    Without these rules, <em>any authenticated user</em> can write to <code>admin/</code>.
-    Client-side UID checks are UX only — they are not a security boundary.
+    <code>"presence": { "ismail": { ".read": "auth != null && auth.uid === 'ADMIN_UID'", ".write": "auth != null && auth.uid === 'ISMAIL_UID'" } }</code><br>
+    Without these rules, presence tracking won't work. Client-side UID checks are UX only.
   </div>
 
   <!-- MAINTENANCE -->
@@ -455,6 +501,35 @@ onValue(ref(db, 'admin/scheduleOverrides'), snap => {
   log('Schedule overrides synced from Firebase', 'ok');
 });
 
+// ── Ismail presence listener ──
+onValue(ref(db, 'presence/ismail'), snap => {
+  const data = snap.val() || {};
+  const el   = document.getElementById('ismail-presence');
+  if (!el) return;
+  if (data.online) {
+    el.innerHTML = `<span class="ismail-online-dot"></span>Online`;
+  } else if (data.lastSeen) {
+    el.innerHTML = `<span class="ismail-offline-dot"></span>Offline · last seen ${window.timeAgo(data.lastSeen)}`;
+  } else {
+    el.innerHTML = `<span class="ismail-offline-dot"></span>Never logged in`;
+  }
+});
+
+// ── Ismail last action listener ──
+onValue(ref(db, 'presence/ismail/lastAction'), snap => {
+  const data = snap.val() || {};
+  const el   = document.getElementById('ismail-last-action');
+  if (!el) return;
+  if (data.label && data.ts) {
+    el._ts = data.ts;
+    el._label = data.label;
+    el.innerHTML = `<strong>Last Action</strong>${data.label}<br><span style="color:var(--text3);font-size:11px;">${timeAgo(data.ts)}</span>`;
+  } else {
+    el._ts = null;
+    el.innerHTML = `<strong>Last Action</strong>No actions yet`;
+  }
+});
+
 function showPanel() {
   D.login.classList.add('gone');
   setTimeout(() => { D.login.style.display = 'none'; }, 400);
@@ -472,6 +547,17 @@ window._showLogin = showLogin;
 </script>
 
 <script>
+/* ── Time ago helper ── */
+function timeAgo(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 10)  return 'just now';
+  if (diff < 60)  return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+window.timeAgo = timeAgo;
+
 /* ── DOM refs ── */
 const D = {
   login:          document.getElementById('login-screen'),
@@ -925,6 +1011,15 @@ function escAttr(str) {
 /* Init */
 updatePreview();
 selectSchedDay('Monday');
+// Refresh Ismail's "last seen / time ago" every 30s
+setInterval(() => {
+  // Re-trigger listeners by reading cached values — just re-render the last action time
+  const la = document.getElementById('ismail-last-action');
+  if (la && la._ts) {
+    const label = la._label || '';
+    la.innerHTML = `<strong>Last Action</strong>${label}<br><span style="color:var(--text3);font-size:11px;">${timeAgo(la._ts)}</span>`;
+  }
+}, 30000);
 </script>
 </body>
 </html>
