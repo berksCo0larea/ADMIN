@@ -387,6 +387,36 @@
     </div>
   </div>
 
+  <!-- SCHOOL SETTINGS -->
+  <div class="section">
+    <div class="section-title">🏫 School Settings</div>
+    <div class="card">
+      <div class="card-title">Identity & Times</div>
+      <div class="card-desc">Change the school name, class, grade, and period times. Updates push live to all users. Use this each year instead of recoding.</div>
+
+      <label class="field-label">School Name</label>
+      <input id="set-school" class="field-input" type="text" maxlength="60" placeholder="P.S./I.S. 104">
+
+      <label class="field-label">Class (e.g. 601)</label>
+      <input id="set-class" class="field-input" type="text" maxlength="20" placeholder="601">
+
+      <label class="field-label">Grade (e.g. Grade 6)</label>
+      <input id="set-grade" class="field-input" type="text" maxlength="30" placeholder="Grade 6">
+
+      <label class="field-label">Homeroom (e.g. 6-208)</label>
+      <input id="set-homeroom" class="field-input" type="text" maxlength="20" placeholder="6-208">
+
+      <label class="field-label" style="margin-top:4px;">⏰ Period Times — all days use the same times</label>
+      <div id="times-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;"></div>
+
+      <button class="action-btn primary" onclick="pushSchoolSettings()">🏫 Push School Settings</button>
+      <div id="settings-status" class="status-pill inactive" style="margin-top:10px;">
+        <div class="status-pill-dot"></div>
+        <span id="settings-status-text">No custom settings</span>
+      </div>
+    </div>
+  </div>
+
   <!-- LOG -->
   <div class="log-section">
     <div class="section-title">📋 Action Log</div>
@@ -502,11 +532,19 @@ onValue(ref(db, 'admin/scheduleOverrides'), snap => {
 });
 
 
+// ── School settings listener ──
+window._listenSchoolSettings = function(callback) {
+  onValue(ref(db, 'admin/schoolSettings'), snap => {
+    callback(snap.val());
+  });
+};
+
 function showPanel() {
   D.login.classList.add('gone');
   setTimeout(() => { D.login.style.display = 'none'; }, 400);
   D.panel.classList.add('visible');
   setLoading(false);
+  initSchoolSettings();
 
   // Start presence listeners now that we're authenticated
   onValue(ref(db, 'presence/ismail'), snap => {
@@ -1000,7 +1038,89 @@ function updateOverrideSummary() {
   if (schedStatusTxt) schedStatusTxt.textContent = `${days.length} day${days.length>1?'s':''} overridden`;
 }
 
-function escAttr(str) {
+/* ════════════════════════════════════════════════════
+   SCHOOL SETTINGS
+   Writes to admin/schoolSettings
+   Schedule app reads and applies these live.
+   ════════════════════════════════════════════════════ */
+
+const DEFAULT_TIMES = [
+  { p:1, start:'8:10',  end:'8:55'  },
+  { p:2, start:'8:55',  end:'9:40'  },
+  { p:3, start:'9:40',  end:'10:20' },
+  { p:4, start:'10:25', end:'11:10' },
+  { p:5, start:'11:15', end:'12:00' },
+  { p:6, start:'12:05', end:'12:50' },
+  { p:7, start:'12:55', end:'13:40' },
+  { p:8, start:'13:45', end:'14:25' },
+];
+
+function buildTimesGrid(times) {
+  const grid = document.getElementById('times-grid');
+  if (!grid) return;
+  grid.innerHTML = times.map(t => `
+    <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:12px;padding:10px 12px;">
+      <div style="font-size:10px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Period ${t.p}</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input id="time-start-${t.p}" type="time" value="${t.start}" style="flex:1;background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;padding:5px 8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text);outline:none;">
+        <span style="font-size:11px;color:var(--text3);font-weight:700;">–</span>
+        <input id="time-end-${t.p}" type="time" value="${t.end}" style="flex:1;background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;padding:5px 8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text);outline:none;">
+      </div>
+    </div>`).join('');
+}
+
+async function pushSchoolSettings() {
+  const school   = document.getElementById('set-school').value.trim();
+  const cls      = document.getElementById('set-class').value.trim();
+  const grade    = document.getElementById('set-grade').value.trim();
+  const homeroom = document.getElementById('set-homeroom').value.trim();
+
+  const times = DEFAULT_TIMES.map(t => ({
+    p:     t.p,
+    start: document.getElementById(`time-start-${t.p}`)?.value || t.start,
+    end:   document.getElementById(`time-end-${t.p}`)?.value   || t.end,
+  }));
+
+  const data = {};
+  if (school)   data.schoolName = school;
+  if (cls)      data.className  = cls;
+  if (grade)    data.grade      = grade;
+  if (homeroom) data.homeroom   = homeroom;
+  data.times = times;
+
+  await safeWrite(
+    'admin/schoolSettings',
+    data,
+    `School settings pushed — ${school || 'name unchanged'} · Class ${cls || 'unchanged'}`,
+    '🏫 School settings updated!',
+    'School settings push failed'
+  );
+}
+
+// Listen for existing settings and populate fields
+function initSchoolSettings() {
+  if (!window._firebaseOnValue || !window._firebaseDb) {
+    setTimeout(initSchoolSettings, 200); return;
+  }
+  // Use the exposed onValue from module
+  const statusEl  = document.getElementById('settings-status');
+  const statusTxt = document.getElementById('settings-status-text');
+
+  // Build the grid with defaults first
+  buildTimesGrid(DEFAULT_TIMES);
+
+  // Listen via safeWrite's db — need to use window._adminListen
+  window._listenSchoolSettings && window._listenSchoolSettings(data => {
+    if (!data) { buildTimesGrid(DEFAULT_TIMES); return; }
+    if (data.schoolName) document.getElementById('set-school').value   = data.schoolName;
+    if (data.className)  document.getElementById('set-class').value    = data.className;
+    if (data.grade)      document.getElementById('set-grade').value    = data.grade;
+    if (data.homeroom)   document.getElementById('set-homeroom').value = data.homeroom;
+    if (data.times)      buildTimesGrid(data.times);
+    if (statusEl)    statusEl.className    = 'status-pill active';
+    if (statusTxt)   statusTxt.textContent = 'Custom settings active';
+  });
+}
   return String(str || '')
     .replace(/&/g,'&amp;')
     .replace(/"/g,'&quot;')
