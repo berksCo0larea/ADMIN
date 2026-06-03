@@ -1121,6 +1121,8 @@ function initSchoolSettings() {
     if (statusTxt)   statusTxt.textContent = 'Custom settings active';
   });
 }
+
+function escAttr(str) {
   return String(str || '')
     .replace(/&/g,'&amp;')
     .replace(/"/g,'&quot;')
