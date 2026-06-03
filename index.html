@@ -474,8 +474,12 @@ window._auth = {
   login:  (email, pw) => signInWithEmailAndPassword(auth, email, pw),
   logout: ()          => signOut(auth),
 };
-window._adminWrite  = adminWrite;
-window._adminRemove = adminRemove;
+window._adminWrite      = adminWrite;
+window._adminRemove     = adminRemove;
+window._firebaseDb      = db;
+window._firebaseRef     = ref;
+window._firebaseSet     = set;
+window._authCurrentUser = () => auth.currentUser;
 
 onAuthStateChanged(auth, user => {
   if (user && user.uid === ADMIN_UID) {
@@ -986,9 +990,17 @@ async function pushScheduleDay() {
       `Clear ${day} overrides failed`
     );
   } else {
-    // Write overrides — no updatedAt inside per-period data, add at day level
     try {
-      await window._adminWrite(`admin/scheduleOverrides/${day}`, overrides);
+      // Write each period override individually to avoid updatedAt polluting the overrides object
+      const db  = window._firebaseDb;
+      const ref = window._firebaseRef;
+      const set = window._firebaseSet;
+      if (!db || !ref || !set) { log('Firebase not ready', 'err'); return; }
+      const user = window._authCurrentUser && window._authCurrentUser();
+      if (!user) { log('Not authenticated', 'err'); return; }
+      for (const [key, val] of Object.entries(overrides)) {
+        await set(ref(db, `admin/scheduleOverrides/${day}/${key}`), val);
+      }
       const count = Object.keys(overrides).length;
       log(`${day}: pushed ${count} period override(s)`, 'ok');
       toast(`📅 ${day} updated! (${count} override${count>1?'s':''})`, '#1D9E75');
