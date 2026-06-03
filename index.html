@@ -501,40 +501,40 @@ onValue(ref(db, 'admin/scheduleOverrides'), snap => {
   log('Schedule overrides synced from Firebase', 'ok');
 });
 
-// ── Ismail presence listener ──
-onValue(ref(db, 'presence/ismail'), snap => {
-  const data = snap.val() || {};
-  const el   = document.getElementById('ismail-presence');
-  if (!el) return;
-  if (data.online) {
-    el.innerHTML = `<span class="ismail-online-dot"></span>Online`;
-  } else if (data.lastSeen) {
-    el.innerHTML = `<span class="ismail-offline-dot"></span>Offline · last seen ${window.timeAgo(data.lastSeen)}`;
-  } else {
-    el.innerHTML = `<span class="ismail-offline-dot"></span>Never logged in`;
-  }
-});
-
-// ── Ismail last action listener ──
-onValue(ref(db, 'presence/ismail/lastAction'), snap => {
-  const data = snap.val() || {};
-  const el   = document.getElementById('ismail-last-action');
-  if (!el) return;
-  if (data.label && data.ts) {
-    el._ts = data.ts;
-    el._label = data.label;
-    el.innerHTML = `<strong>Last Action</strong>${data.label}<br><span style="color:var(--text3);font-size:11px;">${timeAgo(data.ts)}</span>`;
-  } else {
-    el._ts = null;
-    el.innerHTML = `<strong>Last Action</strong>No actions yet`;
-  }
-});
 
 function showPanel() {
   D.login.classList.add('gone');
   setTimeout(() => { D.login.style.display = 'none'; }, 400);
   D.panel.classList.add('visible');
   setLoading(false);
+
+  // Start presence listeners now that we're authenticated
+  onValue(ref(db, 'presence/ismail'), snap => {
+    const data = snap.val() || {};
+    const el   = document.getElementById('ismail-presence');
+    if (!el) return;
+    if (data.online) {
+      el.innerHTML = `<span class="ismail-online-dot"></span>Online`;
+    } else if (data.lastSeen) {
+      el.innerHTML = `<span class="ismail-offline-dot"></span>Offline · last seen ${window.timeAgo(data.lastSeen)}`;
+    } else {
+      el.innerHTML = `<span class="ismail-offline-dot"></span>Never logged in`;
+    }
+  });
+
+  onValue(ref(db, 'presence/ismail/lastAction'), snap => {
+    const data = snap.val() || {};
+    const el   = document.getElementById('ismail-last-action');
+    if (!el) return;
+    if (data.label && data.ts) {
+      el._ts = data.ts;
+      el._label = data.label;
+      el.innerHTML = `<strong>Last Action</strong>${data.label}<br><span style="color:var(--text3);font-size:11px;">${window.timeAgo(data.ts)}</span>`;
+    } else {
+      el._ts = null;
+      el.innerHTML = `<strong>Last Action</strong>No actions yet`;
+    }
+  });
 }
 function showLogin() {
   D.panel.classList.remove('visible');
