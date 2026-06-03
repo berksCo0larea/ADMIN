@@ -6,19 +6,18 @@
 <title>Schedule Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#0d0d0c; --bg2:#161514; --bg3:#1c1b1a;
-    --border:#2a2826; --border2:#383533;
-    --text:#f0ede8; --text2:#9e9b96; --text3:#5c5a56;
-    --accent:#f0ede8; --accent-inv:#0d0d0c;
-    --red:#E24B4A; --green:#1D9E75; --yellow:#f59e0b; --blue:#378ADD;
+  :root{
+    --bg:#0d0d0c;--bg2:#161514;--bg3:#1c1b1a;
+    --border:#2a2826;--border2:#383533;
+    --text:#f0ede8;--text2:#9e9b96;--text3:#5c5a56;
+    --accent:#f0ede8;--accent-inv:#0d0d0c;
+    --red:#E24B4A;--green:#1D9E75;--yellow:#f59e0b;--blue:#378ADD;
     --shadow:0 2px 12px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04);
-    --font:'Nunito',sans-serif; --mono:'JetBrains Mono',monospace;
+    --font:'Nunito',sans-serif;--mono:'JetBrains Mono',monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 
-  /* LOGIN */
   #login-screen{
     position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
     background:var(--bg);z-index:100;padding:24px;transition:opacity .4s,transform .4s;
@@ -32,13 +31,9 @@
   .login-logo{font-size:40px;margin-bottom:16px}
   .login-title{font-size:24px;font-weight:900;margin-bottom:4px;letter-spacing:-.5px}
   .login-sub{font-size:13px;color:var(--text3);font-weight:700;margin-bottom:28px}
-  /* shared label style used in both login + field sections */
-  .login-label,.field-label{
-    font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:block;
-  }
+  .login-label,.field-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:block}
   .login-label{color:var(--text2);margin-bottom:8px}
   .field-label{color:var(--text3)}
-  /* shared input base */
   .login-input,.field-input{
     width:100%;border-radius:12px;border:1.5px solid var(--border2);background:var(--bg3);
     font-family:var(--font);font-weight:700;color:var(--text);outline:none;
@@ -60,7 +55,6 @@
   .login-error{color:var(--red)}
   .login-loading{color:var(--text3)}
 
-  /* PANEL */
   #panel{display:none;max-width:640px;margin:0 auto;padding:20px 16px 48px}
   #panel.visible{display:block;animation:fadeIn .4s ease}
   .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-top:8px}
@@ -72,23 +66,17 @@
     cursor:pointer;font-family:var(--font);transition:background .2s,color .2s,transform .2s;
   }
   .logout-btn:hover{background:var(--red);color:#fff;transform:scale(1.04)}
-
-  /* CONNECTION ROW */
   .conn-row{display:flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:14px}
   .conn-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
   .conn-dot.online{background:var(--green);animation:pulse 1.5s infinite}
   .conn-dot.offline{background:var(--red)}
   .conn-dot.connecting{background:var(--yellow);animation:pulse .8s infinite}
   .conn-text{font-size:13px;font-weight:800}
-
-  /* SECTION + CARD */
   .section{margin-bottom:16px}
   .section-title{font-size:11px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-left:2px}
   .card{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
   .card-title{font-size:16px;font-weight:900;margin-bottom:4px;display:flex;align-items:center;gap:8px}
   .card-desc{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:18px;line-height:1.5}
-
-  /* TOGGLE */
   .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   .toggle-label{font-size:14px;font-weight:800;color:var(--text2)}
   .toggle{position:relative;width:52px;height:28px;border-radius:14px;background:var(--border2);border:none;cursor:pointer;transition:background .3s;flex-shrink:0}
@@ -99,8 +87,6 @@
     background:#fff;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.3);
   }
   .toggle.on::after{transform:translateX(24px)}
-
-  /* TYPE GRID */
   .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
   .type-btn{
     padding:10px 6px;border-radius:12px;border:1.5px solid var(--border2);
@@ -113,8 +99,6 @@
   .type-btn.warning.active{background:var(--yellow);color:#fff;border-color:var(--yellow)}
   .type-btn.success.active{background:var(--green); color:#fff;border-color:var(--green)}
   .type-btn.error.active  {background:var(--red);   color:#fff;border-color:var(--red)}
-
-  /* ACTION BUTTON */
   .action-btn{
     width:100%;padding:13px;border-radius:14px;font-family:var(--font);font-size:14px;font-weight:900;
     border:none;cursor:pointer;margin-top:4px;
@@ -125,19 +109,23 @@
   .action-btn.primary  {background:var(--accent);color:var(--accent-inv)}
   .action-btn.danger   {background:var(--red);color:#fff}
   .action-btn.secondary{background:var(--bg3);color:var(--text2);border:1.5px solid var(--border2)}
-
-  /* STATUS PILL */
+  .action-btn.warning-btn{background:var(--yellow);color:#fff}
   .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;margin-top:10px}
   .status-pill.active  {background:rgba(229,75,74,.15);color:var(--red);border:1.5px solid rgba(229,75,74,.3)}
   .status-pill.inactive{background:rgba(92,90,86,.2);color:var(--text3);border:1.5px solid var(--border)}
   .status-pill-dot{width:6px;height:6px;border-radius:50%}
   .status-pill.active   .status-pill-dot{background:var(--red);animation:pulse 1s infinite}
   .status-pill.inactive .status-pill-dot{background:var(--text3)}
-
-  /* PREVIEW BANNER */
   .preview-banner{border-radius:12px;padding:10px 14px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:12px;transition:background .3s}
 
-  /* LOG */
+  .rules-card{
+    background:rgba(245,158,11,.07);border:1.5px solid rgba(245,158,11,.25);
+    border-radius:16px;padding:14px 16px;margin-bottom:16px;
+    font-size:12px;font-weight:700;color:var(--yellow);line-height:1.6;
+  }
+  .rules-card strong{font-weight:900;display:block;margin-bottom:4px}
+  .rules-card code{font-family:var(--mono);font-size:11px;background:rgba(245,158,11,.12);padding:1px 5px;border-radius:4px}
+
   .log-section{margin-top:20px}
   .log-box{
     background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;
@@ -152,13 +140,75 @@
   .log-entry .err {color:var(--red)}
   .log-entry .warn{color:var(--yellow)}
 
+  /* ── SCHEDULE EDITOR STYLES ── */
+  .sched-day-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+  .sched-day-tab{
+    padding:7px 16px;border-radius:10px;font-size:12px;font-weight:800;
+    border:1.5px solid var(--border2);cursor:pointer;
+    background:var(--bg3);color:var(--text2);font-family:var(--font);
+    transition:background .2s,color .2s,border-color .2s,transform .2s;
+  }
+  .sched-day-tab:hover{transform:translateY(-2px);color:var(--text)}
+  .sched-day-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+  .period-editor-row{
+    background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;
+    padding:14px;margin-bottom:8px;transition:border-color .2s;
+  }
+  .period-editor-row.modified{border-color:var(--yellow);}
+  .period-editor-header{
+    display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  }
+  .period-editor-num{
+    width:30px;height:30px;border-radius:50%;background:var(--border2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:900;color:var(--text2);flex-shrink:0;
+  }
+  .period-editor-time{
+    font-family:var(--mono);font-size:12px;font-weight:700;
+    color:var(--text3);background:var(--bg);border:1px solid var(--border);
+    border-radius:8px;padding:3px 9px;
+  }
+  .period-editor-modified-tag{
+    font-size:10px;font-weight:900;background:rgba(245,158,11,.15);
+    color:var(--yellow);border:1px solid rgba(245,158,11,.3);
+    border-radius:6px;padding:2px 7px;text-transform:uppercase;letter-spacing:.06em;
+  }
+  .period-editor-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .period-editor-field label{
+    font-size:10px;font-weight:800;color:var(--text3);
+    text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:4px;
+  }
+  .period-editor-field input{
+    width:100%;padding:8px 10px;border-radius:10px;border:1.5px solid var(--border2);
+    background:var(--bg);font-family:var(--font);font-size:13px;font-weight:700;
+    color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  .period-editor-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,.12);}
+  .period-editor-field input.changed{border-color:var(--yellow);}
+
+  .sched-action-row{display:flex;gap:8px;margin-top:4px;}
+  .sched-action-row .action-btn{margin-top:0;flex:1;}
+
+  .sched-live-indicator{
+    display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;
+    color:var(--green);margin-bottom:14px;
+  }
+  .sched-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+
+  .override-summary{
+    background:rgba(55,138,221,.08);border:1.5px solid rgba(55,138,221,.2);
+    border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-weight:700;
+    color:var(--blue);line-height:1.6;display:none;
+  }
+  .override-summary.visible{display:block;}
+
   @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes pulse {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">🔐</div>
@@ -166,7 +216,7 @@
     <div class="login-sub">P.S./I.S. 104 · Schedule System</div>
     <label class="login-label">Email</label>
     <input id="login-email" class="login-input" type="email" placeholder="admin@example.com"
-           autocomplete="email" onkeydown="if(event.key==='Enter')$.pw.focus()">
+           autocomplete="email" onkeydown="if(event.key==='Enter')D.pw.focus()">
     <label class="login-label">Password</label>
     <input id="login-pw" class="login-input" type="password" placeholder="Enter admin password…"
            autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
@@ -176,7 +226,6 @@
   </div>
 </div>
 
-<!-- PANEL -->
 <div id="panel">
   <div class="panel-header">
     <div class="panel-logo">📅 Admin <span class="panel-badge">Staff Only</span></div>
@@ -186,6 +235,14 @@
   <div class="conn-row">
     <div id="conn-dot" class="conn-dot connecting"></div>
     <div id="conn-text" class="conn-text">Connecting to Firebase…</div>
+  </div>
+
+  <div class="rules-card">
+    <strong>⚠️ Server-side Firebase Rules required</strong>
+    All writes are rejected by Firebase unless your Realtime Database rules contain:<br>
+    <code>"admin": { ".read": "auth != null && auth.uid === 'ADMIN_UID'", ".write": "auth != null && auth.uid === 'ADMIN_UID'" }</code><br>
+    Without these rules, <em>any authenticated user</em> can write to <code>admin/</code>.
+    Client-side UID checks are UX only — they are not a security boundary.
   </div>
 
   <!-- MAINTENANCE -->
@@ -233,11 +290,53 @@
         <span class="toggle-label">Show banner to users</span>
         <button id="msg-toggle" class="toggle" onclick="flipToggle('msg')"></button>
       </div>
-      <button class="action-btn primary" onclick="pushServerMessage()">📢 Send Server Message</button>
-      <button class="action-btn secondary" style="margin-top:8px" onclick="clearServerMessage()">✕ Clear / Hide Banner</button>
+      <button class="action-btn primary"    onclick="pushServerMessage()">📢 Send Server Message</button>
+      <button class="action-btn secondary"  style="margin-top:8px" onclick="clearServerMessage()">✕ Clear / Hide Banner</button>
       <div id="msg-status" class="status-pill inactive">
         <div class="status-pill-dot"></div>
         <span id="msg-status-text">No active message</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCHEDULE EDITOR
+       Writes to admin/scheduleOverrides/{day}/{periodIndex}
+       Only name, teacher, room are editable.
+       Times are read-only (displayed but not sent).
+       ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">📅 Schedule Editor</div>
+    <div class="card">
+      <div class="card-title">Edit Periods</div>
+      <div class="card-desc">
+        Override class names, teachers, and room numbers for any day. Times are fixed and cannot be changed.
+        Changes push live to all users instantly.
+      </div>
+
+      <!-- Live override summary -->
+      <div class="override-summary" id="override-summary"></div>
+
+      <!-- Day selector tabs -->
+      <div class="sched-day-tabs" id="sched-day-tabs">
+        <button class="sched-day-tab active" onclick="selectSchedDay('Monday')"   >Mon</button>
+        <button class="sched-day-tab"        onclick="selectSchedDay('Tuesday')"  >Tue</button>
+        <button class="sched-day-tab"        onclick="selectSchedDay('Wednesday')">Wed</button>
+        <button class="sched-day-tab"        onclick="selectSchedDay('Thursday')" >Thu</button>
+        <button class="sched-day-tab"        onclick="selectSchedDay('Friday')"   >Fri</button>
+      </div>
+
+      <!-- Period rows injected here -->
+      <div id="sched-period-list"></div>
+
+      <!-- Push / Reset buttons -->
+      <div class="sched-action-row">
+        <button class="action-btn primary" onclick="pushScheduleDay()">📅 Push Changes for <span id="push-day-label">Monday</span></button>
+        <button class="action-btn secondary" style="flex:0 0 auto;padding:13px 18px;" onclick="resetScheduleDay()" title="Reset this day to defaults">↩</button>
+      </div>
+      <div id="sched-status" class="status-pill inactive" style="margin-top:10px;">
+        <div class="status-pill-dot"></div>
+        <span id="sched-status-text">No overrides active</span>
       </div>
     </div>
   </div>
@@ -251,15 +350,13 @@
   </div>
 </div>
 
-<!-- Firebase (module scope: Auth + DB wiring) -->
 <script type="module">
-import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
+       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const ADMIN_UID = "8fQejoQtcigStgoCADAkufqie6D3";
-
-const app  = initializeApp({
+const FB_CONFIG = {
   apiKey:            "AIzaSyDWtxb7IsZmAMZs0oGmryp3vumu6jWhNpM",
   authDomain:        "schedule-d9e6d.firebaseapp.com",
   databaseURL:       "https://schedule-d9e6d-default-rtdb.firebaseio.com",
@@ -267,150 +364,245 @@ const app  = initializeApp({
   storageBucket:     "schedule-d9e6d.firebasestorage.app",
   messagingSenderId: "292184337443",
   appId:             "1:292184337443:web:4c76a5f1f70887692fd596"
-});
+};
+
+const ADMIN_UID = "8fQejoQtcigStgoCADAkufqie6D3";
+
+const app  = initializeApp(FB_CONFIG);
 const db   = getDatabase(app);
 const auth = getAuth(app);
 
-/* Expose to global script */
-window._fb = { login: (e,p) => signInWithEmailAndPassword(auth,e,p), logout: () => signOut(auth) };
+async function adminWrite(path, data) {
+  const user = auth.currentUser;
+  if (!user || user.uid !== ADMIN_UID) {
+    log('Write blocked: no valid admin session', 'err');
+    toast('⛔ Session invalid — please sign in again.', '#E24B4A');
+    showLogin();
+    return;
+  }
+  await set(ref(db, path), { ...data, updatedAt: Date.now() });
+}
 
-/* ── Auth gate ── */
+async function adminRemove(path) {
+  const user = auth.currentUser;
+  if (!user || user.uid !== ADMIN_UID) {
+    log('Remove blocked: no valid admin session', 'err');
+    toast('⛔ Session invalid — please sign in again.', '#E24B4A');
+    showLogin();
+    return;
+  }
+  await remove(ref(db, path));
+}
+
+window._auth = {
+  login:  (email, pw) => signInWithEmailAndPassword(auth, email, pw),
+  logout: ()          => signOut(auth),
+};
+window._adminWrite  = adminWrite;
+window._adminRemove = adminRemove;
+
 onAuthStateChanged(auth, user => {
   if (user && user.uid === ADMIN_UID) {
-    showPanel(); log(`Authenticated as ${user.email}`, 'ok');
+    showPanel();
+    log(`Authenticated as ${user.email}`, 'ok');
   } else {
-    if (user) { signOut(auth); log('Unauthorised UID — denied', 'err'); }
+    if (user) { signOut(auth); log('Unauthorised UID — session terminated', 'err'); }
     showLogin();
   }
 });
 
-/* ── Connection dot ── */
 onValue(ref(db, '.info/connected'), snap => {
   const ok = snap.val();
-  $.connDot.className  = `conn-dot ${ok ? 'online' : 'offline'}`;
-  $.connText.textContent = ok ? '🟢 Connected to Firebase' : '🔴 Disconnected';
+  D.connDot.className    = `conn-dot ${ok ? 'online' : 'offline'}`;
+  D.connText.textContent = ok ? '🟢 Connected to Firebase' : '🔴 Disconnected';
   log(ok ? 'Connected to Firebase' : 'Lost Firebase connection', ok ? 'ok' : 'err');
 });
 
-/* ── Maintenance listener ── */
 onValue(ref(db, 'admin/maintenance'), snap => {
   const d  = snap.val() || {};
   const on = d.active === true;
   setToggle('maint', on, true);
   setPill('maint', on, on ? '🔴 MAINTENANCE ACTIVE' : 'Inactive');
-  if (d.message) $.maintMsg.value = d.message;
-  if (d.eta)     $.maintEta.value = d.eta;
+  if (d.message) D.maintMsg.value = d.message;
+  if (d.eta)     D.maintEta.value = d.eta;
   S.maint = on;
 });
 
-/* ── Server message listener ── */
 onValue(ref(db, 'admin/serverMessage'), snap => {
   const d  = snap.val() || {};
   const on = d.active === true;
   setToggle('msg', on, false);
   setPill('msg', on, on ? `📢 LIVE: "${d.text || ''}"` : 'No active message');
-  if (d.text) { $.srvMsg.value = d.text; updatePreview(); }
-  if (d.type)  pickType(d.type, false);
+  if (d.text) { D.srvMsg.value = d.text; updatePreview(); }
+  if (d.type) pickType(d.type, false);
   S.msg = on;
 });
 
-/* ── dbSet helper ── */
-window._dbSet = (path, data) => set(ref(db, path), { ...data, updatedAt: Date.now() });
+// ── Schedule overrides listener ──
+// Watches admin/scheduleOverrides and keeps S.overrides in sync.
+// Also refreshes the editor UI for the currently selected day.
+onValue(ref(db, 'admin/scheduleOverrides'), snap => {
+  const data = snap.val() || {};
+  // Strip updatedAt from each day node, keep only period arrays
+  S.overrides = {};
+  for (const [day, val] of Object.entries(data)) {
+    if (val && typeof val === 'object') {
+      S.overrides[day] = val;
+    }
+  }
+  updateOverrideSummary();
+  renderSchedPeriods(); // refresh editor view
+  log('Schedule overrides synced from Firebase', 'ok');
+});
 
-/* ── UI transition helpers (need DOM; defined here for auth gate) ── */
-window._showPanel = () => {
-  $.login.classList.add('gone');
-  setTimeout(() => { $.login.style.display = 'none'; }, 400);
-  $.panel.classList.add('visible');
+function showPanel() {
+  D.login.classList.add('gone');
+  setTimeout(() => { D.login.style.display = 'none'; }, 400);
+  D.panel.classList.add('visible');
   setLoading(false);
-};
-window._showLogin = () => {
-  $.panel.classList.remove('visible');
-  $.login.style.display = 'flex';
-  $.login.classList.remove('gone');
-  $.email.value = $.pw.value = '';
+}
+function showLogin() {
+  D.panel.classList.remove('visible');
+  D.login.style.display = 'flex';
+  D.login.classList.remove('gone');
+  D.email.value = D.pw.value = '';
   setLoading(false);
-};
-function showPanel() { window._showPanel(); }
-function showLogin() { window._showLogin(); }
+}
+window._showLogin = showLogin;
 </script>
 
-<!-- Global script: DOM cache, state, UI handlers -->
 <script>
-/* ── Cached DOM refs ── */
-const $ = {
-  login:         document.getElementById('login-screen'),
-  panel:         document.getElementById('panel'),
-  email:         document.getElementById('login-email'),
-  pw:            document.getElementById('login-pw'),
-  loginBtn:      document.getElementById('login-btn'),
-  loginLoad:     document.getElementById('login-loading'),
-  loginErr:      document.getElementById('login-error'),
-  connDot:       document.getElementById('conn-dot'),
-  connText:      document.getElementById('conn-text'),
-  maintToggle:   document.getElementById('maint-toggle'),
-  maintStatus:   document.getElementById('maint-status'),
-  maintStatusTxt:document.getElementById('maint-status-text'),
-  maintMsg:      document.getElementById('maint-msg'),
-  maintEta:      document.getElementById('maint-eta'),
-  msgToggle:     document.getElementById('msg-toggle'),
-  msgStatus:     document.getElementById('msg-status'),
-  msgStatusTxt:  document.getElementById('msg-status-text'),
-  srvMsg:        document.getElementById('srv-msg-text'),
-  preview:       document.getElementById('msg-preview'),
-  previewIcon:   document.getElementById('preview-icon'),
-  previewText:   document.getElementById('preview-text'),
-  logBox:        document.getElementById('log-box'),
+/* ── DOM refs ── */
+const D = {
+  login:          document.getElementById('login-screen'),
+  panel:          document.getElementById('panel'),
+  email:          document.getElementById('login-email'),
+  pw:             document.getElementById('login-pw'),
+  loginBtn:       document.getElementById('login-btn'),
+  loginLoad:      document.getElementById('login-loading'),
+  loginErr:       document.getElementById('login-error'),
+  connDot:        document.getElementById('conn-dot'),
+  connText:       document.getElementById('conn-text'),
+  maintToggle:    document.getElementById('maint-toggle'),
+  maintStatus:    document.getElementById('maint-status'),
+  maintStatusTxt: document.getElementById('maint-status-text'),
+  maintMsg:       document.getElementById('maint-msg'),
+  maintEta:       document.getElementById('maint-eta'),
+  msgToggle:      document.getElementById('msg-toggle'),
+  msgStatus:      document.getElementById('msg-status'),
+  msgStatusTxt:   document.getElementById('msg-status-text'),
+  srvMsg:         document.getElementById('srv-msg-text'),
+  preview:        document.getElementById('msg-preview'),
+  previewIcon:    document.getElementById('preview-icon'),
+  previewText:    document.getElementById('preview-text'),
+  logBox:         document.getElementById('log-box'),
 };
 
 /* ── App state ── */
-const S = { maint: false, msg: false, msgType: 'info' };
+const S = {
+  maint:     false,
+  msg:       false,
+  msgType:   'info',
+  schedDay:  'Monday',
+  overrides: {},   // { Monday: { p1: {name,teacher,room}, … }, … }
+};
 
-/* ── Message type styles ── */
-const TYPE = {
+/* ── Base schedule (times fixed — used as read-only reference) ── */
+const BASE_SCHEDULE = {
+  Monday:[
+    {p:1,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:10', end:'8:55'},
+    {p:2,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:55', end:'9:40'},
+    {p:3,name:'Elective',        teacher:'TBD',      room:'TBD',start:'9:40', end:'10:20'},
+    {p:4,name:'Chorus 6',        teacher:'Castine',  room:'308',start:'10:25',end:'11:10'},
+    {p:5,name:'Core Social Studies',teacher:'Petrizzo',room:'208',start:'11:15',end:'12:00'},
+    {p:6,name:'Lunch 6',         teacher:'Fernandez',room:'CAF',start:'12:05',end:'12:50'},
+    {p:7,name:'Physical Education',teacher:'Dibbs',  room:'GYM',start:'12:55',end:'13:40'},
+    {p:8,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'13:45',end:'14:25'},
+  ],
+  Tuesday:[
+    {p:1,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:10', end:'8:55'},
+    {p:2,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:55', end:'9:40'},
+    {p:3,name:'Elective',        teacher:'TBD',      room:'TBD',start:'9:40', end:'10:20'},
+    {p:4,name:'Chorus 6',        teacher:'Castine',  room:'308',start:'10:25',end:'11:10'},
+    {p:5,name:'Core Social Studies',teacher:'Petrizzo',room:'208',start:'11:15',end:'12:00'},
+    {p:6,name:'Lunch 6',         teacher:'Fernandez',room:'CAF',start:'12:05',end:'12:50'},
+    {p:7,name:'Physical Education',teacher:'Dibbs',  room:'GYM',start:'12:55',end:'13:40'},
+    {p:8,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'13:45',end:'14:25'},
+  ],
+  Wednesday:[
+    {p:1,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:10', end:'8:55'},
+    {p:2,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:55', end:'9:40'},
+    {p:3,name:'Elective',        teacher:'TBD',      room:'TBD',start:'9:40', end:'10:20'},
+    {p:4,name:'Technology 6',    teacher:'Logozzo',  room:'208',start:'10:25',end:'11:10'},
+    {p:5,name:'Core Science 6',  teacher:'Petrizzo', room:'208',start:'11:15',end:'12:00'},
+    {p:6,name:'Lunch 6',         teacher:'Fernandez',room:'CAF',start:'12:05',end:'12:50'},
+    {p:7,name:'Physical Education',teacher:'Dibbs',  room:'GYM',start:'12:55',end:'13:40'},
+    {p:8,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'13:45',end:'14:25'},
+  ],
+  Thursday:[
+    {p:1,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:10', end:'8:55'},
+    {p:2,name:'Health 6',        teacher:'Petrizzo', room:'208',start:'8:55', end:'9:40'},
+    {p:3,name:'Elective',        teacher:'TBD',      room:'TBD',start:'9:40', end:'10:20'},
+    {p:4,name:'Civics For All',  teacher:'Zera',     room:'208',start:'10:25',end:'11:10'},
+    {p:5,name:'Core Science 6',  teacher:'Petrizzo', room:'208',start:'11:15',end:'12:00'},
+    {p:6,name:'Lunch 6',         teacher:'Fernandez',room:'CAF',start:'12:05',end:'12:50'},
+    {p:7,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'12:55',end:'13:40'},
+    {p:8,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'13:45',end:'14:25'},
+  ],
+  Friday:[
+    {p:1,name:'Core ELA 6',      teacher:'Petrizzo', room:'208',start:'8:10', end:'8:55'},
+    {p:2,name:'Health 6',        teacher:'Petrizzo', room:'208',start:'8:55', end:'9:40'},
+    {p:3,name:'Spanish 6',       teacher:'Scandole', room:'208',start:'9:40', end:'10:20'},
+    {p:4,name:'Core Social Studies',teacher:'Petrizzo',room:'208',start:'10:25',end:'11:10'},
+    {p:5,name:'Core Science 6',  teacher:'Petrizzo', room:'208',start:'11:15',end:'12:00'},
+    {p:6,name:'Lunch 6',         teacher:'Fernandez',room:'CAF',start:'12:05',end:'12:50'},
+    {p:7,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'12:55',end:'13:40'},
+    {p:8,name:'Core Math 6',     teacher:'Petrizzo', room:'208',start:'13:45',end:'14:25'},
+  ],
+};
+
+const MSG_TYPES = {
   info:    { bg:'rgba(55,138,221,.15)',  color:'#378ADD', icon:'📢' },
   warning: { bg:'rgba(245,158,11,.15)', color:'#f59e0b', icon:'⚠️' },
   success: { bg:'rgba(29,158,117,.15)', color:'#1D9E75', icon:'✅' },
   error:   { bg:'rgba(226,75,74,.15)',  color:'#E24B4A', icon:'🚨' },
 };
 
-/* ── Shared helpers ── */
+/* ── Helpers ── */
 function setToggle(key, on, red) {
-  const el = key === 'maint' ? $.maintToggle : $.msgToggle;
+  const el = key === 'maint' ? D.maintToggle : D.msgToggle;
   el.className = `toggle${red ? ' red' : ''}${on ? ' on' : ''}`;
 }
 function setPill(key, on, text) {
-  const el  = key === 'maint' ? $.maintStatus    : $.msgStatus;
-  const txt = key === 'maint' ? $.maintStatusTxt : $.msgStatusTxt;
-  el.className = `status-pill ${on ? 'active' : 'inactive'}`;
+  const el  = key === 'maint' ? D.maintStatus    : D.msgStatus;
+  const txt = key === 'maint' ? D.maintStatusTxt : D.msgStatusTxt;
+  el.className    = `status-pill ${on ? 'active' : 'inactive'}`;
   txt.textContent = text;
 }
 function setLoading(on) {
-  $.loginBtn.disabled    = on;
-  $.loginBtn.textContent = on ? 'Signing in…' : 'Sign In →';
-  $.loginLoad.style.display = on ? 'block' : 'none';
+  D.loginBtn.disabled    = on;
+  D.loginBtn.textContent = on ? 'Signing in…' : 'Sign In →';
+  D.loginLoad.style.display = on ? 'block' : 'none';
 }
-function showError(msg, ms = 4000) {
-  $.loginErr.textContent    = msg;
-  $.loginErr.style.display  = 'block';
-  $.email.style.borderColor = $.pw.style.borderColor = '#E24B4A';
+function showLoginError(msg, ms = 4000) {
+  D.loginErr.textContent = msg;
+  D.loginErr.style.display = 'block';
+  D.email.style.borderColor = D.pw.style.borderColor = '#E24B4A';
   setTimeout(() => {
-    $.loginErr.style.display = 'none';
-    $.email.style.borderColor = $.pw.style.borderColor = '';
+    D.loginErr.style.display = 'none';
+    D.email.style.borderColor = D.pw.style.borderColor = '';
   }, ms);
 }
 function log(msg, level = 'ok') {
-  const now = new Date();
-  const t   = [now.getHours(), now.getMinutes(), now.getSeconds()]
-                .map(n => String(n).padStart(2,'0')).join(':');
+  const t   = new Date().toTimeString().slice(0,8);
   const cls = level === 'err' ? 'err' : level === 'warn' ? 'warn' : 'ok';
   const div = document.createElement('div');
   div.className = 'log-entry';
   div.innerHTML = `<span class="ts">${t} </span><span class="${cls}">[${level.toUpperCase()}]</span> ${msg}`;
-  const ph = $.logBox.querySelector('.log-entry:only-child');
+  const ph = D.logBox.querySelector('.log-entry:only-child');
   if (ph?.textContent.includes('Waiting')) ph.remove();
-  $.logBox.appendChild(div);
-  $.logBox.scrollTop = $.logBox.scrollHeight;
+  D.logBox.appendChild(div);
+  D.logBox.scrollTop = D.logBox.scrollHeight;
 }
 function toast(msg, bg = '#1D9E75') {
   let el = document.getElementById('_toast');
@@ -424,32 +616,58 @@ function toast(msg, bg = '#1D9E75') {
   el.style.opacity = '1';
   el.style.transform = 'translateX(-50%) translateY(0)';
   clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(80px)'; }, 3500);
+  el._t = setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-50%) translateY(80px)';
+  }, 3500);
 }
-function dbGuard() {
-  if (!window._dbSet) { log('Firebase not ready','err'); return false; }
-  return true;
+
+async function safeWrite(path, data, successMsg, successToast, errLabel) {
+  try {
+    await window._adminWrite(path, data);
+    log(successMsg, 'ok');
+    toast(successToast, '#1D9E75');
+  } catch(e) {
+    const denied = e.code === 'PERMISSION_DENIED';
+    const msg    = denied
+      ? `${errLabel}: permission denied by Firebase Rules`
+      : `${errLabel}: ${e.message}`;
+    log(msg, 'err');
+    toast(`❌ ${denied ? 'Permission denied.' : e.message}`, '#E24B4A');
+  }
+}
+
+async function safeRemove(path, successMsg, successToast, errLabel) {
+  try {
+    await window._adminRemove(path);
+    log(successMsg, 'ok');
+    toast(successToast, '#1D9E75');
+  } catch(e) {
+    const denied = e.code === 'PERMISSION_DENIED';
+    log(denied ? `${errLabel}: permission denied` : `${errLabel}: ${e.message}`, 'err');
+    toast(`❌ ${denied ? 'Permission denied.' : e.message}`, '#E24B4A');
+  }
 }
 
 /* ── AUTH ── */
 async function doLogin() {
-  const email = $.email.value.trim(), pw = $.pw.value;
-  if (!email || !pw) { showError('❌ Please enter your email and password.', 3000); return; }
+  const email = D.email.value.trim(), pw = D.pw.value;
+  if (!email || !pw) { showLoginError('❌ Enter your email and password.', 3000); return; }
   setLoading(true);
   try {
-    await window._fb.login(email, pw);
-  } catch (e) {
+    await window._auth.login(email, pw);
+  } catch(e) {
     setLoading(false);
-    showError('❌ Access denied. Check credentials.');
-    log(`Failed login (${e.code || e.message})`, 'err');
+    showLoginError('❌ Access denied. Check credentials.');
+    log(`Login failed (${e.code || e.message})`, 'err');
   }
 }
 async function doLogout() {
-  await window._fb.logout();
+  await window._auth.logout();
   log('Admin signed out', 'warn');
 }
 
-/* ── TOGGLE (shared for maint + msg) ── */
+/* ── TOGGLE ── */
 function flipToggle(key) {
   S[key] = !S[key];
   setToggle(key, S[key], key === 'maint');
@@ -457,57 +675,256 @@ function flipToggle(key) {
 
 /* ── MAINTENANCE ── */
 async function pushMaintenance() {
-  if (!dbGuard()) return;
-  const msg = $.maintMsg.value.trim() || "We'll be back shortly!";
-  const eta = $.maintEta.value.trim();
-  try {
-    await window._dbSet('admin/maintenance', { active: S.maint, message: msg, eta });
-    log(`Maintenance ${S.maint ? 'ENABLED' : 'disabled'} — "${msg}"${eta ? ` ETA:${eta}` : ''}`, S.maint ? 'err' : 'ok');
-    toast(S.maint ? '🔧 Maintenance enabled!' : '✅ Maintenance disabled!', S.maint ? '#E24B4A' : '#1D9E75');
-  } catch(e) { log('Push failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
+  const msg = D.maintMsg.value.trim() || "We'll be back shortly!";
+  const eta = D.maintEta.value.trim();
+  const onLabel = S.maint ? 'ENABLED' : 'disabled';
+  await safeWrite(
+    'admin/maintenance',
+    { active: S.maint, message: msg, eta },
+    `Maintenance ${onLabel} — "${msg}"${eta ? ` ETA:${eta}` : ''}`,
+    S.maint ? '🔧 Maintenance enabled!' : '✅ Maintenance disabled!',
+    'Maintenance push failed'
+  );
 }
 
 /* ── SERVER MESSAGE ── */
 function pickType(type, update = true) {
   S.msgType = type;
-  ['info','warning','success','error'].forEach(t => {
-    document.getElementById(`type-${t}`).className = `type-btn ${t}${t===type?' active':''}`;
-  });
+  ['info','warning','success','error'].forEach(t =>
+    document.getElementById(`type-${t}`).className = `type-btn ${t}${t===type?' active':''}`
+  );
   if (update) updatePreview();
 }
 function updatePreview() {
-  const s    = TYPE[S.msgType] || TYPE.info;
-  const text = $.srvMsg.value || 'Your message will appear here…';
-  $.preview.style.background = s.bg;
-  $.preview.style.color      = s.color;
-  $.previewIcon.textContent  = s.icon;
-  $.previewText.textContent  = text;
+  const s    = MSG_TYPES[S.msgType] || MSG_TYPES.info;
+  const text = D.srvMsg.value || 'Your message will appear here…';
+  D.preview.style.background  = s.bg;
+  D.preview.style.color       = s.color;
+  D.previewIcon.textContent   = s.icon;
+  D.previewText.textContent   = text;
 }
 async function pushServerMessage() {
-  if (!dbGuard()) return;
-  const text = $.srvMsg.value.trim();
-  if (!text) { log('Message text empty','warn'); toast('⚠️ Message text is empty!','#f59e0b'); return; }
+  const text = D.srvMsg.value.trim();
+  if (!text) { log('Message text empty', 'warn'); toast('⚠️ Message text is empty!', '#f59e0b'); return; }
   S.msg = true;
   setToggle('msg', true, false);
-  try {
-    await window._dbSet('admin/serverMessage', { active: true, text, type: S.msgType });
-    log(`Message sent [${S.msgType}]: "${text}"`, 'ok');
-    toast('📢 Message sent to all users!', '#1D9E75');
-  } catch(e) { log('Send failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
+  await safeWrite(
+    'admin/serverMessage',
+    { active: true, text, type: S.msgType },
+    `Message sent [${S.msgType}]: "${text}"`,
+    '📢 Message sent to all users!',
+    'Message send failed'
+  );
 }
 async function clearServerMessage() {
-  if (!dbGuard()) return;
   S.msg = false;
   setToggle('msg', false, false);
-  try {
-    await window._dbSet('admin/serverMessage', { active: false, text:'', type:'info' });
-    log('Server message cleared','ok');
-    toast('✅ Banner cleared!','#1D9E75');
-  } catch(e) { log('Clear failed: '+e.message,'err'); toast('❌ '+e.message,'#E24B4A'); }
+  await safeWrite(
+    'admin/serverMessage',
+    { active: false, text: '', type: 'info' },
+    'Server message cleared',
+    '✅ Banner cleared!',
+    'Clear failed'
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   SCHEDULE EDITOR
+   ════════════════════════════════════════════════════ */
+
+function fmt12(t) {
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+// Switch which day's editor is shown
+function selectSchedDay(day) {
+  S.schedDay = day;
+  document.getElementById('push-day-label').textContent = day;
+  // Update tab active state
+  document.querySelectorAll('.sched-day-tab').forEach((btn, i) => {
+    const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+    btn.classList.toggle('active', days[i] === day);
+  });
+  renderSchedPeriods();
+}
+
+// Render the 8 period editor rows for the current day
+function renderSchedPeriods() {
+  const day        = S.schedDay;
+  const basePeriods = BASE_SCHEDULE[day] || [];
+  const dayOverride = S.overrides[day] || {};
+  const list       = document.getElementById('sched-period-list');
+  if (!list) return;
+
+  list.innerHTML = basePeriods.map((period, idx) => {
+    const key = `p${period.p}`;
+    const ov  = dayOverride[key] || {};   // existing override for this period
+    // Effective values = override if present, else base
+    const effName    = ov.name    !== undefined ? ov.name    : period.name;
+    const effTeacher = ov.teacher !== undefined ? ov.teacher : period.teacher;
+    const effRoom    = ov.room    !== undefined ? ov.room    : period.room;
+    const isModified = Object.keys(ov).length > 0;
+
+    return `
+      <div class="period-editor-row${isModified ? ' modified' : ''}" id="per-row-${idx}">
+        <div class="period-editor-header">
+          <div class="period-editor-num">${period.p}</div>
+          <div class="period-editor-time">${fmt12(period.start)} – ${fmt12(period.end)}</div>
+          ${isModified ? '<div class="period-editor-modified-tag">✏️ Overridden</div>' : ''}
+        </div>
+        <div class="period-editor-fields">
+          <div class="period-editor-field">
+            <label>Class Name</label>
+            <input
+              id="sched-name-${idx}"
+              type="text"
+              maxlength="60"
+              value="${escAttr(effName)}"
+              placeholder="${escAttr(period.name)}"
+              oninput="markPeriodChanged(${idx})"
+              class="${isModified && ov.name !== undefined ? 'changed' : ''}"
+            >
+          </div>
+          <div class="period-editor-field">
+            <label>Teacher</label>
+            <input
+              id="sched-teacher-${idx}"
+              type="text"
+              maxlength="40"
+              value="${escAttr(effTeacher)}"
+              placeholder="${escAttr(period.teacher)}"
+              oninput="markPeriodChanged(${idx})"
+              class="${isModified && ov.teacher !== undefined ? 'changed' : ''}"
+            >
+          </div>
+          <div class="period-editor-field">
+            <label>Room</label>
+            <input
+              id="sched-room-${idx}"
+              type="text"
+              maxlength="20"
+              value="${escAttr(effRoom)}"
+              placeholder="${escAttr(period.room)}"
+              oninput="markPeriodChanged(${idx})"
+              class="${isModified && ov.room !== undefined ? 'changed' : ''}"
+            >
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// Visually mark a row as locally edited (unsaved yellow border)
+function markPeriodChanged(idx) {
+  const row = document.getElementById(`per-row-${idx}`);
+  if (row) row.classList.add('modified');
+  ['name','teacher','room'].forEach(field => {
+    const inp = document.getElementById(`sched-${field}-${idx}`);
+    if (inp) inp.classList.add('changed');
+  });
+}
+
+// Collect current editor values and push to Firebase
+async function pushScheduleDay() {
+  const day        = S.schedDay;
+  const basePeriods = BASE_SCHEDULE[day] || [];
+  const overrides  = {};
+
+  basePeriods.forEach((period, idx) => {
+    const nameVal    = (document.getElementById(`sched-name-${idx}`)?.value    || '').trim();
+    const teacherVal = (document.getElementById(`sched-teacher-${idx}`)?.value || '').trim();
+    const roomVal    = (document.getElementById(`sched-room-${idx}`)?.value    || '').trim();
+
+    // Only store a period override if at least one field differs from base
+    if (
+      nameVal    !== period.name    ||
+      teacherVal !== period.teacher ||
+      roomVal    !== period.room
+    ) {
+      overrides[`p${period.p}`] = {
+        name:    nameVal    || period.name,
+        teacher: teacherVal || period.teacher,
+        room:    roomVal    || period.room,
+      };
+    }
+  });
+
+  const hasOverrides = Object.keys(overrides).length > 0;
+
+  if (!hasOverrides) {
+    // Nothing changed from base — remove the day's overrides entirely
+    await safeRemove(
+      `admin/scheduleOverrides/${day}`,
+      `${day} overrides cleared (matches base schedule)`,
+      `✅ ${day} reset to defaults!`,
+      `Clear ${day} overrides failed`
+    );
+  } else {
+    // Write overrides — no updatedAt inside per-period data, add at day level
+    try {
+      await window._adminWrite(`admin/scheduleOverrides/${day}`, overrides);
+      const count = Object.keys(overrides).length;
+      log(`${day}: pushed ${count} period override(s)`, 'ok');
+      toast(`📅 ${day} updated! (${count} override${count>1?'s':''})`, '#1D9E75');
+    } catch(e) {
+      const denied = e.code === 'PERMISSION_DENIED';
+      log(denied ? `Push ${day} overrides: permission denied` : `Push ${day} overrides: ${e.message}`, 'err');
+      toast(`❌ ${denied ? 'Permission denied.' : e.message}`, '#E24B4A');
+    }
+  }
+}
+
+// Reset current day to defaults (removes Firebase override node)
+async function resetScheduleDay() {
+  const day = S.schedDay;
+  if (!confirm(`Reset ALL overrides for ${day} back to the default schedule?`)) return;
+  await safeRemove(
+    `admin/scheduleOverrides/${day}`,
+    `${day} overrides removed — back to defaults`,
+    `↩ ${day} reset to defaults!`,
+    `Reset ${day} failed`
+  );
+}
+
+// Update the blue info card summarising active overrides
+function updateOverrideSummary() {
+  const el = document.getElementById('override-summary');
+  const schedStatus    = document.getElementById('sched-status');
+  const schedStatusTxt = document.getElementById('sched-status-text');
+  if (!el) return;
+
+  const days = Object.keys(S.overrides).filter(d => Object.keys(S.overrides[d]).length > 0);
+  if (days.length === 0) {
+    el.classList.remove('visible');
+    el.textContent = '';
+    if (schedStatus)    schedStatus.className    = 'status-pill inactive';
+    if (schedStatusTxt) schedStatusTxt.textContent = 'No overrides active';
+    return;
+  }
+
+  const lines = days.map(d => {
+    const count = Object.keys(S.overrides[d]).length;
+    return `${d}: ${count} period${count>1?'s':''} overridden`;
+  });
+  el.classList.add('visible');
+  el.innerHTML = `<strong>📅 Active schedule overrides</strong>${lines.join('<br>')}`;
+  if (schedStatus)    schedStatus.className    = 'status-pill active';
+  if (schedStatusTxt) schedStatusTxt.textContent = `${days.length} day${days.length>1?'s':''} overridden`;
+}
+
+function escAttr(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
 }
 
 /* Init */
 updatePreview();
+selectSchedDay('Monday');
 </script>
 </body>
 </html>
